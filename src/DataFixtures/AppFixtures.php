@@ -15,6 +15,31 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
+    private array $ingredients = [
+        'Tomate',
+        'Oignon',
+        'Sel',
+        'Poivre',
+        'Huile',
+        'Persil',
+        'Thym',
+        'Vin',
+        'Vinaigre',
+        'Farine',
+        'Lentilles',
+        'Lait',
+        'Oeuf',
+        'Coriandre',
+        'Curry',
+        'Lait de coco',
+        'Poulet',
+        'Chat',
+        'Pomme de terre',
+        'Chocolat',
+        'Chocobon'
+    ];
+
+
 
     public function __construct(private readonly UserPasswordHasherInterface $hasher)
     {
@@ -31,10 +56,11 @@ class AppFixtures extends Fixture
 
     private function loadIngredient(ObjectManager $manager): void
     {
-        for ($i = 0; $i < 5; $i++) {
-            $name = "Ingredient $i";
+        $ingredients = $this->ingredients;
+        for ($i = 0; $i < count($ingredients); $i++) {
+            $name = $ingredients[$i];
             $ingredient = (new Ingredient())
-                ->setName($name);
+                ->setName($ingredients[$i]);
             $manager->persist($ingredient);
             $this->addReference($name, $ingredient);
         }
@@ -226,13 +252,17 @@ class AppFixtures extends Fixture
 
             $mesures = [' g', ' grammes', '', ' cl'];
 
+            $randomIngredients = $this->getRandomIngredients($numberIngredient);
+
             for ($g = 0; $g < $numberIngredient; $g++) {
+
                 $numberMesure = rand(0, 3);
 
                 $recipe->addIngredientRecipe((new IngredientRecipe())
                     ->setRecipe($recipe)
-                    ->setIngredient($this->getRandomIngredient())
-                    ->setQuantity('5' . $mesures[$numberMesure]));
+                    ->setIngredient($randomIngredients[$g])
+                    ->setQuantity(rand(1, 100) . $mesures[$numberMesure]));
+
             }
 
             $manager->persist($recipe);
@@ -241,12 +271,25 @@ class AppFixtures extends Fixture
     }
 
 
-    private function getRandomIngredient(): Ingredient
+    /**
+     * @param $number
+     * @return Ingredient[]
+     */
+    private function getRandomIngredients($number): array
     {
-        $number = rand(0, 4);
+        $ingredients = [...$this->ingredients];
+        $newArray = [];
 
-        /** @var Ingredient $ingredient */
-        $ingredient = $this->getReference("Ingredient $number", Ingredient::class);
-        return $ingredient;
+        for ($i = 0; $i < $number; $i++) {
+            $numberRand = rand(0, count($ingredients) -  1);
+            /** @var Ingredient $ingredient */
+            $ingredient = $this->getReference($ingredients[$numberRand], Ingredient::class);
+            $newArray[] = $ingredient;
+            array_splice($ingredients, $numberRand, 1);
+        }
+
+
+        /** @var Ingredient[] $newArray */
+        return $newArray;
     }
 }
