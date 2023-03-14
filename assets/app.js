@@ -1,3 +1,3 @@
-import './styles/app.css';
-import "bootstrap/scss/bootstrap.scss";
+import "./styles/global.scss";
+import './styles/app.scss';
 require('bootstrap');

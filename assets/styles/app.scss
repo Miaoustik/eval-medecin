@@ -1,0 +1,35 @@
+@font-face{
+    font-family : 'Reenie Beanie';
+    src : url('../fonts/ReenieBeanie-Regular.ttf') format('truetype');
+}
+
+@font-face{
+    font-family : 'Noto Sans';
+    src : url('../fonts/NotoSans-Medium.ttf') format('truetype');
+}
+
+@font-face{
+    font-family : 'Baloo Bhaina';
+    src : url('../fonts/BalooBhaina-Regular.ttf') format('truetype');
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 18px;
+    line-height: 1.35;
+}
+
+.brand-title {
+    font-family: Reenie Beanie, sans-serif;
+    font-size: 1.6rem;
+}
+
+.navbar {
+    box-shadow: 0 4px 4px rgba(0, 0, 0, .25) !important;
+}
+

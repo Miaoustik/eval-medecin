@@ -2,6 +2,7 @@
 <html lang="fr">
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
 
@@ -14,7 +15,37 @@
         {% endblock %}
     </head>
     <body>
+        <header>
+            <nav class="shadowNav navbar navbar-expand-lg bg-light border border-2 p-0 border-primary">
+                <div class="container-fluid ">
+                    <button class="navbar-toggler border-0 p-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon text-primary"></span>
+                    </button>
+                    <a class="navbar-brand text-secondary brand-title p-0 ms-auto me-auto" href="/">Sandrine Coupart</a>
+                    <div>
+                        <img  src="{{ asset('images/Search.png') }}" height="37" width="37" alt="search">
+                        <img class="ms-1" src="{{ asset('images/User.png') }}" alt="search">
+                    </div>
+
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="/">Page d'acceuil</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/contact">Contact</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
         {% block body %}
         {% endblock %}
+        <footer class="mt-5 py-2 bg-primary text-white d-flex justify-content-around">
+            <a class="w-25 text-white text-decoration-none d-block">Politique de confidentialité</a>
+            <span class="text-center w-25 d-block">Copyright</span>
+            <a class="text-center w-25 d-block text-white text-decoration-none ">CGU</a>
+        </footer>
     </body>
 </html>
