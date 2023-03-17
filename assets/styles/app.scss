@@ -24,12 +24,48 @@ html {
     line-height: 1.35;
 }
 
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.appContainer {
+    flex-grow: 1;
+}
+
+.inputPlaceholder::placeholder {
+    color: #00000066;
+}
+.inputPlaceholderLight::placeholder {
+    color: #DC9A7D;
+}
 .brand-title {
     font-family: Reenie Beanie, sans-serif;
     font-size: 1.6rem;
+
 }
 
 .navbar {
+    box-shadow: 0 4px 4px rgba(0, 0, 0, .25) !important;
+}
+
+.secondTitle {
+    font-size: 1.40rem ;
+    font-family: Baloo Bhaina, sans-serif;
+    color: #876C60;
+}
+
+.textNoto {
+    font-family: Noto Sans, sans-serif;
+}
+
+.textJustify {
+    text-align: justify;
+}
+
+.shadow1 {
     box-shadow: 0 4px 4px rgba(0, 0, 0, .25) !important;
 }
 

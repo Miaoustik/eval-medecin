@@ -9,9 +9,9 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route(path: '')]
 class HomeController extends AbstractController
 {
-    #[Route(path: '', name: 'home')]
+    #[Route(path: '', name: 'home_index')]
     public function index(): Response
     {
-        return $this->render('home/home.html.twig', ['hello' => 'testing']);
+        return $this->render('home/index.html.twig', ['hello' => 'testing']);
     }
 }

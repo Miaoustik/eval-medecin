@@ -1,0 +1,13 @@
+.roundedSquare::before {
+  content: "";
+  height: 0.55rem;
+  width: 0.55rem;
+  background-color: #DC9A7D;
+  display: inline-block;
+  border-radius: 3px;
+  margin-right: 0.6rem;
+}
+
+.lastBorder:last-child {
+  border-bottom: 1px solid #DC9A7D !important;
+}

@@ -1,0 +1,40 @@
+.roundedSquare::before {
+  content: "";
+  height: 0.55rem;
+  width: 0.55rem;
+  background-color: #DC9A7D;
+  display: inline-block;
+  border-radius: 3px;
+  margin-right: 0.6rem;
+}
+.inputStyle {
+  background-color: #DC9A7D4D;
+}
+
+.barrePrep {
+  display: inline-block;
+  height: 2rem;
+  width: 2px;
+  border: 1px solid #876C60;
+  margin-top: 0.7rem;
+}
+
+.prep {
+  width: 5.70rem;
+}
+
+.repos {
+  width: 3.23rem;
+}
+
+.cuisson {
+  width: 3.95rem;
+}
+
+.secondTitleSmall {
+  font-size: 1.2rem;
+}
+
+.avisInterresse {
+  font-size: 1.22rem;
+}

@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('admin_createRecipeReact') }}
+{% endblock %}
+
+{%  block body %}
+    <div id="reactForm" data-ingredients="{{ ingredients }}"></div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('admin_createRecipe') }}
+{% endblock %}

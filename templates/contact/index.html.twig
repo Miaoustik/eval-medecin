@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h2 class="secondTitle mb-3">Me contacter</h2>
+    <p class="textNoto">Vous pouvez me contacter par message en spécifiant votre adresse mail.</p>
+
+    <form>
+        <label class="secondTitle" for="emailInput" >Email :</label>
+        <input class="mb-4 form-control shadow1 inputStyle" id="emailInput" type="email" placeholder="Votre addresse email ..."/>
+        <label class="secondTitle" for="emailInput " >Message :</label>
+        <textarea class="form-control shadow1 inputStyle" id="emailInput" type="email" rows="10" placeholder="Votre message ..."></textarea>
+        <button class="btn btn-primary text-white w-100 mt-4">Envoyer</button>
+    </form>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('contact') }}
+{% endblock %}

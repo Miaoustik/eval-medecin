@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="shadow1 form-control  d-flex justify-content-between">
+        <span class=" text-primary  searchBar rounded">Je recherche ...</span>
+        <div class="ms-10 p-0 px-2 rounded-pill btn btn-primary "><img class="pb-1" src="{{ asset('images/Loupe.png') }}" alt="Launch Search"/></div>
+    </div>
+    <section class="mb-5">
+        <h2 class="text-secondary secondTitle mt-5">Mes services</h2>
+        <p class="textNoto">
+            Vous proposer des recettes adaptées à votre régime ou allergies spéciéfiées lors de votre inscription.
+        </p>
+    </section>
+    <section>
+        <h2 class="text-secondary secondTitle">A propos</h2>
+        <p class="textNoto">
+            Je suis une diététicienne-nutritionniste dont le cabinet est situé à Caen. En tant que professionnelle de santé, je prends en charge des patients dans le cadre de consultations diététiques. J’anime également des ateliers de prévention et d’information sur la nutrition.
+        </p>
+    </section>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('home') }}
+{% endblock %}

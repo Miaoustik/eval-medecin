@@ -24,6 +24,11 @@ Encore
     .addEntry('home', './assets/home.js')
     .addEntry('contact', './assets/contact.js')
     .addEntry('recipes', './assets/recipes.js')
+    .addEntry('login', './assets/login.js')
+    .addEntry('recipe', './assets/recipe.js')
+    .addEntry('admin_createPatient', './assets/admin/createPatient.js')
+    .addEntry('admin_createRecipe', './assets/admin/createRecipe.js')
+    .addEntry('admin_createRecipeReact', './assets/admin/CreateRecipeReact/index.js')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     //.enableStimulusBridge('./assets/controllers.json')
@@ -66,7 +71,7 @@ Encore
     //.enableTypeScriptLoader()
 
     // uncomment if you use React
-    //.enableReactPreset()
+    .enableReactPreset()
 
     // uncomment to get integrity="..." attributes on your script & link tags
     // requires WebpackEncoreBundle 1.4 or higher

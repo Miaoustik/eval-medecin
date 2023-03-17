@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{%  block body %}
+    <h2 class="mb-4 mt-2 secondTitle text-decoration-underline">Créer un patient</h2>
+    <form>
+        <label class="secondTitle" for="inputEmail">Email</label>
+        <input placeholder="Votre email ..." type="email" name="email" id="inputEmail" class="form-control mb-4 inputPlaceholderLight" autocomplete="email" required autofocus>
+        <label class="secondTitle" for="inputPassword">Mot de passe</label>
+        <input placeholder="Votre mot de passe ..." type="password" name="password" id="inputPassword" class="form-control inputPlaceholderLight" required>
+        <h3 class="mt-5 mb-3 secondTitle text-decoration-underline">Allergies du patient : </h3>
+        <div class="ps-5 py-1 form-check">
+            <input class="form-check-input" type="checkbox" id="fruit" />
+            <label for="fruit" class="form-check-label text-secondary textNoto ps-2">Fruits de mer</label>
+        </div>
+        <div class="ps-5 py-1 form-check">
+            <input class="form-check-input" type="checkbox" id="Noix" />
+            <label for="Noix" class="form-check-label text-secondary textNoto ps-2">Noix</label>
+        </div>
+        <div class="ps-5 py-1 form-check">
+            <input class="form-check-input" type="checkbox" id="Lactose" />
+            <label for="Lactose" class="form-check-label text-secondary textNoto ps-2">Lactose</label>
+        </div>
+        <div class="ps-5 py-1 form-check">
+            <input class="form-check-input" type="checkbox" id="Gluten" />
+            <label for="Gluten" class="form-check-label text-secondary textNoto ps-2">Gluten</label>
+        </div>
+
+        <h3 class="mt-5 mb-3 secondTitle text-decoration-underline">Regime du patient : </h3>
+        <div class="ps-5 py-1 form-check">
+            <input class="form-check-input" type="checkbox" id="sel" />
+            <label for="sel" class="form-check-label text-secondary textNoto ps-2">Sans sel</label>
+        </div>
+        <div class="ps-5 py-1 form-check">
+            <input class="form-check-input" type="checkbox" id="sucre" />
+            <label for="sucre" class="form-check-label text-secondary textNoto ps-2">Sans sucre</label>
+        </div>
+        <div class="ps-5 py-1 form-check">
+            <input class="form-check-input" type="checkbox" id="Végétarien" />
+            <label for="Végétarien" class="form-check-label text-secondary textNoto ps-2">Végétarien</label>
+        </div>
+        <div class="ps-5 py-1 form-check">
+            <input class="form-check-input" type="checkbox" id="graisse" />
+            <label for="graisse" class="form-check-label text-secondary textNoto ps-2">Pauvre en graisse</label>
+        </div>
+        <button class="btn btn-primary text-white w-100 mt-5 shadow1">Créer</button>
+    </form>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('admin_createPatient') }}
+{% endblock %}

@@ -1,0 +1,74 @@
+{%  extends 'base.html.twig' %}
+
+{% block body %}
+    <h1 class="secondTitle text-center"> {{ recipe.title }}</h1>
+    <p class="textNoto textJustify">{{ recipe.description }}</p>
+
+    <h2 class="mt-5 text-decoration-underline secondTitle">Ingrédients :</h2>
+    <ul class="p-0 mt-3 list-unstyled">
+        {% for ingredientRecipe in recipe.ingredientRecipes %}
+            <li class="ps-4"><p class="roundedSquare pt-1 textNoto">{{ ingredientRecipe.ingredient.name }}</p></li>
+        {% endfor %}
+    </ul>
+
+    <h2 class="mt-5 text-decoration-underline secondTitle">Allergènes :</h2>
+    <ul class="p-0 mt-3 list-unstyled">
+        {% for allergen in recipe.allergens %}
+            <li class="ps-4"><p class="roundedSquare pt-1 textNoto">{{ allergen.name }}</p></li>
+        {% endfor %}
+    </ul>
+
+    <h2 class="mt-5 text-decoration-underline secondTitle">Régimes :</h2>
+    <ul class="p-0 mt-3 list-unstyled">
+        {% for diet in recipe.diets %}
+            <li class="ps-4"><p class="roundedSquare pt-1 textNoto">{{ diet.name }}</p></li>
+        {% endfor %}
+    </ul>
+
+    <h2 class="mt-5 mb-4 text-decoration-underline secondTitle">Temps de préparation :</h2>
+    <div class="inputStyle rounded pt-2 shadow1">
+        <p class="text-decoration-underline text-secondary text-center">Temps total : 1h30min</p>
+        <div class="d-flex justify-content-around">
+            <p class="prep text-center text-secondary">Préparation : 30min</p>
+            <div class="barrePrep"></div>
+            <p class="repos text-center text-secondary">Repos : 30min</p>
+            <div class="barrePrep"></div>
+            <p class="cuisson text-center text-secondary">Cuisson : 30min</p>
+        </div>
+    </div>
+    <h2 class="secondTitle  text-decoration-underline mt-5">Etapes :</h2>
+    <ul class="list-unstyled mb-5">
+        {% for key, stage in recipe.stages %}
+            <li class="mt-5">
+                <p class="secondTitleSmall secondTitle">Etape {{ key }}</p>
+                <p class="textNoto">{{ stage }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+    <div class="inputStyle rounded shadow1">
+        <p class="text-center text-secondary mb-1 pt-2">La recette est terminée.</p>
+        <p class="text-center textNoto avisInterresse mb-1">Votre avis m'intérresse</p>
+        <div class="d-flex justify-content-center pb-2">
+            <svg width="40" height="40" viewBox="0 0 100 100">
+                <polygon points="50,0 62,40 100,40 69,62 81,100 50,76.5 19,100 31,62 0,40 38,40" style="fill: #DC9A7D;stroke: #DC9A7D;stroke-width: 1px" />
+            </svg>
+            <svg width="40" height="40" viewBox="0 0 100 100">
+                <polygon points="50,0 62,40 100,40 69,62 81,100 50,76.5 19,100 31,62 0,40 38,40" style="fill: #DC9A7D;stroke: #DC9A7D;stroke-width: 1px" />
+            </svg>
+            <svg width="40" height="40" viewBox="0 0 100 100">
+                <polygon points="50,0 62,40 100,40 69,62 81,100 50,76.5 19,100 31,62 0,40 38,40" style="fill: #DC9A7D;stroke: #DC9A7D;stroke-width: 1px" />
+            </svg>
+            <svg width="40" height="40" viewBox="0 0 100 100">
+                <polygon points="50,0 62,40 100,40 69,62 81,100 50,76.5 19,100 31,62 0,40 38,40" style="fill: #DC9A7D;stroke: #DC9A7D;stroke-width: 1px" />
+            </svg>
+            <svg width="40" height="40" viewBox="0 0 100 100">
+                <polygon points="50,0 62,40 100,40 69,62 81,100 50,76.5 19,100 31,62 0,40 38,40" style="fill: #FFFFFF;stroke: #DC9A7D;stroke-width: 1px" />
+            </svg>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('recipe') }}
+{% endblock %}

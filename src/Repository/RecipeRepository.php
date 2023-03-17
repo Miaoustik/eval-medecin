@@ -2,8 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Allergen;
 use App\Entity\Recipe;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -63,4 +66,65 @@ class RecipeRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+    /**
+     * @param int $maxResult
+     * @param int $page
+     * @param int|string|null $property
+     * @param array|null $criteria
+     * @return Recipe[]
+     */
+    public function findAllPaginatedBy(int $maxResult, int $page = 1, mixed $property = null, array $criteria = null): array
+    {
+        $queryBuilder = $this->createQueryBuilder('r')
+            ->setMaxResults($maxResult)
+            ->setFirstResult($maxResult * ($page - 1));
+
+        if ($property) {
+            if (gettype($property) === 'array') {
+                foreach ($property as $key => $prop) {
+                    if ($key === 0) {
+                        $queryBuilder = $queryBuilder->select("r.$prop");
+                    } else {
+                        $queryBuilder = $queryBuilder->addSelect("r.$prop");
+                    }
+                }
+            } else {
+                $queryBuilder = $queryBuilder->select('r.' . $property);
+            }
+        }
+
+        if ($criteria) {
+            foreach ($criteria as $key => $crit) {
+                $queryBuilder = $queryBuilder
+                    ->andWhere("r.$key = :param")
+                    ->setParameter("param", $key);
+            }
+        }
+
+        return $queryBuilder
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param int $id
+     * @return Recipe|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findByIdRecipe(int $id): ?Recipe
+    {
+        return $this->createQueryBuilder('r')
+            ->select("r", 'ir', 'i', 'd')
+            ->leftJoin('r.allergens', 'a')
+            ->leftJoin('r.diets', 'd')
+            ->leftJoin('r.ingredientRecipes', 'ir')
+            ->leftJoin('ir.ingredient', 'i')
+            ->andWhere("r.id = :id")
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+
 }
