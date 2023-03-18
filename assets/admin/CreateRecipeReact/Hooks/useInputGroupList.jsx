@@ -1,16 +1,21 @@
 import {useCallback, useMemo, useState} from "react";
 
-export default function useInputGroupList (inputNames = []) {
+export default function useInputGroupList (inputNames = [], firstRequired = true) {
 
-    const initialValue = [
-        {
-            'id' : 1,
-        }
-    ]
+    let initialValue = []
 
-    inputNames.forEach((v) => {
-        initialValue[0][v] = ''
-    })
+    if (firstRequired === true) {
+        initialValue = [
+            {
+                'id' : 1,
+            }
+        ]
+
+        inputNames.forEach((v) => {
+            initialValue[0][v] = ''
+        })
+    }
+
 
     const [inputs, setInputs] = useState(initialValue)
 
@@ -41,7 +46,7 @@ export default function useInputGroupList (inputNames = []) {
         setInputs(prevState => {
 
             const newState = [...prevState]
-            const newId = newState[newState.length - 1].id + 1
+            const newId = newState[newState.length - 1] ? newState[newState.length - 1].id + 1 : 1
             const newValue = {
                 id : newId
             }
@@ -60,6 +65,8 @@ export default function useInputGroupList (inputNames = []) {
         handleAdd,
         handleChange,
         handleRemove,
-        setInputs
-    }), [inputs, handleAdd, handleChange, handleRemove, setInputs])
+        setInputs,
+        inputNames,
+        firstRequired
+    }), [inputs, handleAdd, handleChange, handleRemove, setInputs, inputNames, firstRequired])
 }

@@ -6,7 +6,7 @@ use App\Repository\DietRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DietRepository::class)]
-class Diet
+class Diet implements \JsonSerializable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -31,5 +31,13 @@ class Diet
         $this->name = $name;
 
         return $this;
+    }
+
+
+    public function jsonSerialize(): mixed
+    {
+        return [
+            'name' => $this->name
+        ];
     }
 }

@@ -15,10 +15,12 @@ export default function InputGroupListWithSuggestions (
         inputNames = [],
         suggestionOn = [],
         divClass = 'd-flex mb-2',
-        inputClass = 'form-control me-3',
-        btnRemoveClass = 'btn btn-primary text-white ms-2',
+        divRelative = "position-relative w-100",
+        inputClass = 'form-control',
+        btnRemoveClass = 'btn btn-primary text-white ms-3',
         btnAddClass = 'shadow1 btn btn-primary text-white w-100 mt-4',
-        btnAddText = 'Ajouter un ingredient'
+        btnAddText = 'Ajouter un ingredient',
+        type = 'text'
     })
 {
 
@@ -27,11 +29,11 @@ export default function InputGroupListWithSuggestions (
             {inputs.map((value, index) => {
                 return (
                     <div key={value.id} className={divClass}>
-                        {inputNames.map((v) => {
+                        {inputNames.map((v, k) => {
                             if (suggestionOn.includes(v)) {
                                 return (
-                                    <div className={"position-relative w-100"}>
-                                        <input onBlur={handleBlur} onFocus={handleFocus} data-id={value.id} data-index={index} data-inputname={v} onChange={handleChange} className={'form-control'} type={'text'} value={value[v]}/>
+                                    <div key={'relative' + value[v]} className={divRelative  + ((k !== inputNames.length - 1) ? ' me-3' : '')}>
+                                        <input onBlur={handleBlur} onFocus={handleFocus} data-id={value.id} data-index={index} data-inputname={v} onChange={handleChange} className={'form-control'} type={type} value={value[v]}/>
                                         {!((suggestions.length === 1) && (suggestions[0][v] === value[v])) && value[v] !== '' && suggestions.length > 0 &&
                                             <div className={'position-absolute w-100 bg-white rounded-bottom shadow1 mt-2' + (suggestionOn ? ' border border-primary' : '')}>
                                                 {suggestionActive == value.id && suggestions.map((e, k) => {
@@ -49,8 +51,8 @@ export default function InputGroupListWithSuggestions (
                                     data-index={index}
                                     data-inputname={v}
                                     onChange={handleChange}
-                                    className={inputClass}
-                                    type={'text'}
+                                    className={inputClass + ((k !== inputNames.length - 1) ? ' me-3' : '')}
+                                    type={type}
                                     value={value[v]}
                                     key={value.id + v}
                                 />

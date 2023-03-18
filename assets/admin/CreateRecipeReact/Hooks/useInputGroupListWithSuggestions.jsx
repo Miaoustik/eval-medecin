@@ -20,6 +20,7 @@ export default function useInputGroupListWithSuggestions (inputNames = [], sugge
         e.preventDefault()
         handleChange(e)
         const value = e.target.value
+        console.log(value)
         filterSuggestions(value)
     }, [handleChange, filterSuggestions])
 
@@ -52,7 +53,7 @@ export default function useInputGroupListWithSuggestions (inputNames = [], sugge
     return useMemo(() => ({
         inputs,
         handleAdd,
-        handleChange: handleChange2,
+        'handleChange': handleChange2,
         handleBlur,
         handleFocus,
         suggestions,
@@ -60,7 +61,8 @@ export default function useInputGroupListWithSuggestions (inputNames = [], sugge
         handleClick,
         handleMouseDown,
         suggestionActive,
-        inputNames
+        inputNames,
+        suggestionOn
     }), [
         inputs,
         handleAdd,
@@ -72,6 +74,7 @@ export default function useInputGroupListWithSuggestions (inputNames = [], sugge
         handleClick,
         handleMouseDown,
         suggestionActive,
-        inputNames
+        inputNames,
+        suggestionOn
     ])
 }
