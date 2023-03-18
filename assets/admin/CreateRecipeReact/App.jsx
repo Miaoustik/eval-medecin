@@ -1,42 +1,14 @@
 import React, {useCallback, useState} from "react";
-import IngredientInput from "./Components/IngredientInput";
-import useInputGroupList from "./Hooks/useInputGroupList";
+import useInputGroupListWithSuggestions from "./Hooks/useInputGroupListWithSuggestions";
+import InputGroupListWithSuggestions from "./Components/InputGroupListWithSuggestions";
 
 export default function App ({ ingredients }) {
 
-    const {inputs, handleChange, handleAdd, handleRemove, setInputs} = useInputGroupList(['quantity', 'name'])
+    const props = useInputGroupListWithSuggestions(['quantity', 'name'], 'name', ingredients)
 
     const [stages, setStages] = useState([])
 
-    const [suggestions, setSuggestions] = useState([])
-    const [suggestionActive, setSuggestionActive] = useState(null);
 
-    const filterIngredient = useCallback((value) => {
-        const ingredientFiltred = JSON.parse(ingredients).filter(e => {
-            const regex = new RegExp('^' + value.charAt(0).toUpperCase() + value.slice(1))
-            return regex.test(e.name)
-
-        })
-        setSuggestions(ingredientFiltred)
-    }, [])
-
-    const handleChange2 = useCallback((e) => {
-        e.preventDefault()
-        handleChange(e)
-        const value = e.target.value
-        filterIngredient(value)
-    }, [handleChange, ingredients])
-
-
-    //TODO NEED ID
-    const handleFocus = useCallback((e) => {
-        setSuggestionActive(e.target.getAttribute('data-id'))
-    }, [])
-
-    const handleBlur = useCallback((e) => {
-
-        setSuggestionActive(null)
-    }, [])
 
 
     return (
@@ -101,11 +73,7 @@ export default function App ({ ingredients }) {
 
                 <p>Ingrédients : </p>
 
-                {inputs.map((value, index) => {
-                    return (<IngredientInput filterIngredient={filterIngredient} setInputs={setInputs} handleBlur={handleBlur} key={value.id} index={index} handleChange={handleChange2} withBtn={inputs.length > 1} suggestionActive={suggestionActive} suggestions={suggestions} handleFocus={handleFocus} value={inputs[index]} handleRemove={handleRemove} />)
-                })}
-
-                <button className={'shadow1 btn btn-primary text-white w-100 mt-4'} onClick={handleAdd}>Ajouter un ingredient</button>
+                <InputGroupListWithSuggestions {...props} />
             </form>
         </>
     )
