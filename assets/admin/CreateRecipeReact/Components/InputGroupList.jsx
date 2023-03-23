@@ -4,7 +4,7 @@ export default function (
     {
         divClass = 'd-flex mb-2',
         inputClass = 'form-control',
-        btnRemoveClass = 'btn btn-primary text-white ms-3',
+        btnRemoveClass = 'btn btn-primary text-white ms-3 shadow1',
         btnAddClass = 'shadow1 btn btn-primary text-white w-100 mt-4',
         btnAddText = 'Ajouter un ingredient',
         inputs,
@@ -14,15 +14,17 @@ export default function (
         inputNames = [],
         type = 'text',
         firstRequired,
-        containerClass = 'mt-4'
+        containerClass = 'mt-4',
+        placeholders = [],
+        first
     })
 {
     return (
                 <div className={containerClass}>
-                    {inputs.map((value, index) => {
+                    {((inputs.length > 1) || (inputs.length === 1 && first === true)) && inputs.map((value, index) => {
                         return (
                             <div key={value.id} className={divClass}>
-                                {inputNames.map((v) => {
+                                {inputNames.map((v, k) => {
                                     if (type === 'textarea') {
                                         return (
                                             <textarea
@@ -30,8 +32,9 @@ export default function (
                                                 data-index={index}
                                                 data-inputname={v}
                                                 onChange={handleChange}
-                                                className={inputClass}
+                                                className={inputClass + ' ' + (k === inputNames.length - 1 ? '' : 'me-3')}
                                                 value={value[v]}
+                                                placeholder={placeholders[k]}
                                             >
                                             </textarea>
                                         )
@@ -42,9 +45,10 @@ export default function (
                                             data-index={index}
                                             data-inputname={v}
                                             onChange={handleChange}
-                                            className={inputClass}
+                                            className={inputClass  + ' ' + (k === inputNames.length - 1 ? '' : 'me-3') + ' ingredient'}
                                             type={type}
                                             value={value[v]}
+                                            placeholder={placeholders[k]}
                                         />
                                     )
                                 })}

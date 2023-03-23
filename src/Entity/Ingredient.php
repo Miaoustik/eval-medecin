@@ -2,10 +2,13 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\IngredientRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: IngredientRepository::class)]
+#[ApiResource]
 class Ingredient implements \JsonSerializable
 {
     #[ORM\Id]
@@ -13,7 +16,8 @@ class Ingredient implements \JsonSerializable
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
+    #[Groups(['POST_admin_createRecipe'])]
     private ?string $name = null;
 
     public function getId(): ?int

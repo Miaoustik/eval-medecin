@@ -63,4 +63,19 @@ class IngredientRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function findAllByName(array $ingredients)
+    {
+        $qb = $this->createQueryBuilder('i');
+        $params = [];
+        foreach ( $ingredients as $k => $ingredient) {
+            $qb = $qb->orWhere("i.name = :name$k");
+            $params["name$k"] = $ingredient;
+        }
+
+        $qb->setParameters($params);
+
+        return $qb
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -2,19 +2,17 @@ import {useCallback, useMemo, useState} from "react";
 
 export default function useInputGroupList (inputNames = [], firstRequired = true) {
 
-    let initialValue = []
+    let initialValue = [
+        {
+            'id' : 1,
+        }
+    ]
 
-    if (firstRequired === true) {
-        initialValue = [
-            {
-                'id' : 1,
-            }
-        ]
+    inputNames.forEach((v) => {
+        initialValue[0][v] = ''
+    })
 
-        inputNames.forEach((v) => {
-            initialValue[0][v] = ''
-        })
-    }
+    const [first, setFirst] = useState(firstRequired)
 
 
     const [inputs, setInputs] = useState(initialValue)
@@ -43,21 +41,24 @@ export default function useInputGroupList (inputNames = [], firstRequired = true
 
     const handleAdd = useCallback((e) => {
         e.preventDefault()
-        setInputs(prevState => {
+        if (first === false && firstRequired === false) {
+            setFirst(true)
+        } else {
+            setInputs(prevState => {
 
-            const newState = [...prevState]
-            const newId = newState[newState.length - 1] ? newState[newState.length - 1].id + 1 : 1
-            const newValue = {
-                id : newId
-            }
-            inputNames.forEach(v => {
-                newValue[v] = ''
+                const newState = [...prevState]
+                const newId = newState[newState.length - 1].id + 1
+                const newValue = {
+                    id: newId
+                }
+                inputNames.forEach(v => {
+                    newValue[v] = ''
+                })
+                newState.push(newValue)
+                return newState
             })
-            newState.push(newValue)
-            return newState
-        })
-
-    }, [])
+        }
+    }, [inputNames, setInputs, first, firstRequired])
 
 
     return useMemo(() => ({
@@ -67,6 +68,7 @@ export default function useInputGroupList (inputNames = [], firstRequired = true
         handleRemove,
         setInputs,
         inputNames,
-        firstRequired
-    }), [inputs, handleAdd, handleChange, handleRemove, setInputs, inputNames, firstRequired])
+        firstRequired,
+        first
+    }), [inputs, handleAdd, handleChange, handleRemove, setInputs, inputNames, firstRequired, first])
 }

@@ -202,7 +202,7 @@ class AppFixtures extends Fixture
             }
 
             if ($allergen) {
-                $recipe->addAllergens($allergen);
+                $recipe->addAllergen($allergen);
             }
 
             if ($diet) {
