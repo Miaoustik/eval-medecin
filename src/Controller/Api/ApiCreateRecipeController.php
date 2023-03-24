@@ -20,23 +20,27 @@ class ApiCreateRecipeController
         $ingredientsData = $data->getIngredientRecipes();
         $ingredients = [];
 
-        foreach ($ingredientsData as $key => $value) {
+        foreach ($ingredientsData as $value) {
             $ingredients[] = $value->getIngredient()->getName();
         }
 
-        $test = $this->ingredientRepository->findAllByName($ingredients);
+        $ingredientsWithId = $this->ingredientRepository->findAllByName($ingredients);
 
-        /** @var IngredientRecipe[] $ingredientsRecipes */
-        $ingredientsRecipes = [];
-        foreach ($test as $ingredient) {
-            $ingredientRecipe = new IngredientRecipe();
-            $ingredientRecipe->setIngredient($ingredient);
-            $ingredientsRecipes[] = $ingredientRecipe;
+        foreach ($ingredientsWithId as $ingredientWithId) {
+            foreach ($ingredientsData as $newIngredient) {
+
+                if ($newIngredient->getIngredient()->getName() === $ingredientWithId->getName()) {
+
+                    $ingredientRecipe = (new IngredientRecipe())
+                        ->setIngredient($ingredientWithId)
+                        ->setQuantity($newIngredient->getQuantity());
+
+                    $data->removeIngredientRecipe($newIngredient);
+                    $data->addIngredientRecipe($ingredientRecipe);
+                }
+            }
         }
-
-        $data->setIngredientRecipe($ingredientsRecipes);
-        //TODO GET INgredients id
-
-        dd($test, $data);
+        dd($data);
+        return $data;
     }
 }

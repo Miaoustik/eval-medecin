@@ -14,11 +14,12 @@ class IngredientRecipe
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['GET_recipe_read'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['POST_admin_createRecipe'])]
+    #[Groups(['POST_admin_createRecipe', 'GET_recipe_read'])]
     private ?Ingredient $ingredient = null;
 
     #[ORM\ManyToOne(inversedBy: 'ingredientRecipes')]
@@ -26,7 +27,7 @@ class IngredientRecipe
     private ?Recipe $recipe = null;
 
     #[ORM\Column]
-    #[Groups(['POST_admin_createRecipe'])]
+    #[Groups(['POST_admin_createRecipe', 'GET_recipe_read'])]
     private ?string $quantity = null;
 
     public function getId(): ?int

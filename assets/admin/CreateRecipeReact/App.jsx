@@ -1,13 +1,103 @@
-import React, {useCallback, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import InputGroupList from "./Components/InputGroupList";
 import useInputGroupList from "./Hooks/useInputGroupList";
 import useInputCheckbox from "./Hooks/useInputCheckbox";
 import InputCheckbox from "./Components/InputCheckbox";
 import {capitalizeFirstLetter} from "./Utils/functions";
 
-export default function App ({ diets, allergens }) {
+export default function App ({recipeid = null , diets, allergens }) {
 
-    //TODO title description state
+    useEffect(() => {
+
+        const controller = new AbortController()
+
+        if (recipeid) {
+            const fetchRecipeOption = {
+                signal: controller.signal,
+                headers: {
+                    Accept: 'application/json'
+                }
+            }
+
+            fetch('/api/recipes/' + recipeid, fetchRecipeOption)
+                .then(res => res.json())
+                .then(data => {
+
+                    setTitleInput(data.title)
+                    setDescriptionInput(data.description)
+                    setPreps( prevState => {
+
+                        const newState = {...prevState}
+
+                        newState.preparation = data.preparationTime
+                        newState.repos = data.breakTime
+                        newState.cuisson = data.cookingTime
+
+                        return newState
+                    })
+
+                    function setCheckbox (prevState, dataValue) {
+                        const newState = [...prevState]
+                        dataValue.forEach((iriAllergen, k) => {
+                            const iriAllergenId = iriAllergen.split('/')
+                            const iriId = iriAllergenId[iriAllergenId.length - 1]
+                            newState.forEach((e) => {
+                                if (e.id == iriId) {
+                                    e.checked = true
+                                }
+                            })
+                        })
+                        return newState
+                    }
+
+                    allergensCheckbox.setInputs(prevState => {
+                        return setCheckbox(prevState, data.allergens)
+                    })
+
+                    dietsCheckbox.setInputs(prevState => {
+                        return setCheckbox(prevState, data.diets)
+                    })
+
+                    ingredientsInputGroup.setInputs(prevState => {
+                        const newState = [...prevState]
+                        data.ingredientRecipes.forEach((value, index) => {
+                            if (index === 1) {
+                                newState[0].quantity = value.quantity
+                                newState[0].name = value.ingredient.name
+                            } else {
+                                newState.push({
+                                    id: newState[newState.length - 1].id + 1,
+                                    quantity: value.quantity,
+                                    name: value.ingredient.name
+                                })
+                            }
+                        })
+                        return newState
+                    })
+
+                    stagesInputGroup.setInputs(prevState => {
+                        const newState = [...prevState]
+                        data.stages.forEach((value, index) => {
+                            if (index === 1) {
+                                newState[0].stage = value
+                            } else {
+                                newState.push({
+                                    id: newState[newState.length - 1].id + 1,
+                                    stage: value
+                                })
+                            }
+                        })
+                        return newState
+                    })
+
+                    console.log(data, stagesInputGroup.inputs)
+                })
+        }
+        return () => {
+            controller.abort();
+        }
+
+    }, [])
 
     const [titleInput, setTitleInput] = useState('')
     const [descriptionInput, setDescriptionInput] = useState('')
@@ -84,10 +174,21 @@ export default function App ({ diets, allergens }) {
             'preparationTime' : preps.preparation === '' ? 0 : parseInt(preps.preparation, 10),
             'breakTime' : preps.repos === '' ? 0 : parseInt(preps.repos, 10),
             'cookingTime' : preps.cuisson === '' ? 0 : parseInt(preps.cuisson, 10),
-            "ingredients" : ingredientsInputGroup.inputs,
+            "ingredientRecipes" : ingredientsInputGroup.inputs.map(e => {
+                return {
+                    "quantity": e['quantity'],
+                    "ingredient": {
+                        "name": e['name']
+                    }
+                }
+            }),
             "stages" : stagesInputGroup.inputs.map(e => e.stage),
             'allergens' : [],
             'diets' : []
+        }
+
+        if (recipeid) {
+            recipe['@id'] = recipeid
         }
 
         allergensCheckbox.inputs.forEach(input => {
@@ -111,7 +212,6 @@ export default function App ({ diets, allergens }) {
             }
         })
 
-        console.log(dietsInputGroup, allergensInputGroup)
         dietsInputGroup.inputs.forEach(input => {
             if (input.name !== '') {
                 const value = input.name.trim()
@@ -122,22 +222,18 @@ export default function App ({ diets, allergens }) {
         })
 
         const requestOptions = {
-            method: 'POST',
+            method: recipeid ? 'PUT' : 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(recipe)
         };
 
-        console.log(recipe)
-
-        /*fetch('/api/recipes', requestOptions)
+        fetch(recipeid ? ('/api/recipes/' + recipeid) : '/api/recipes', requestOptions)
             .then(res => res.json())
             .then(data => console.log(data))
-            .catch(e => console.log(e))*/
-
-        //TODO creer un state pour chaque input et les récuperer ici.
-        //TODO BACK END creation recette
+            .catch(e => console.log(e))
 
         setSubmitted(true)
+
     }, [
         titleInput,
         descriptionInput,

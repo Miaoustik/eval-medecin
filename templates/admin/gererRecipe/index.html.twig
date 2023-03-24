@@ -1,0 +1,18 @@
+{% extends '/recipes/index.html.twig' %}
+
+{% block modify %}
+    {% for recipe in recipes %}
+        <li class="lastBorder border-top border-primary ps-1">
+            <div class="d-flex align-items-center">
+
+                <p class="roundedSquare pt-3">
+                    <a class=" text-decoration-none textNoto text-black" href="{{ path('recipe_index', {id: recipe.id}) }}">
+                        {{ recipe.title }}
+                    </a>
+                </p>
+                <a href="{{ path('admin_modifyRecipe_index', {'id': recipe.id}) }}" class="ms-auto btn btn-primary text-white">Modifier</a>
+                <a class="ms-2 btn btn-secondary text-white">Supprimer</a>
+            </div>
+        </li>
+    {% endfor %}
+{% endblock %}

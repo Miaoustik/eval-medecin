@@ -3,10 +3,25 @@
 {% block body %}
     <h2 class="secondTitle text-secondary mb-4">Découvrez nos recettes</h2>
     <ul class="p-0 list-unstyled">
+    {% block modify %}
         {% for recipe in recipes %}
-            <li class="lastBorder border-top border-primary ps-1"><p class="roundedSquare pt-3 textNoto"><a href="{{ path('recipe_index', {id: recipe.id}) }}">{{ recipe.title }}</a></p></li>
+            <li class="lastBorder border-top border-primary ps-1"><p class="roundedSquare pt-3"><a class="text-decoration-none textNoto text-black" href="{{ path('recipe_index', {id: recipe.id}) }}">{{ recipe.title }}</a></p></li>
         {% endfor %}
+    {% endblock %}
     </ul>
+    <nav aria-label="Page navigation">
+        <ul class=" mt-4 mb-2 pagination text-secondary justify-content-center">
+            {% if (currentPage != 1) %}
+                <li class="page-item"><a class="page-link" href="{{ path(paginationPath, {"page": currentPage - 1}) }}">Précédent</a></li>
+            {% endif %}
+            {% for page in 1..pageNumber %}
+                <li class="page-item"><a class="page-link" href="{{ path(paginationPath, {"page": page}) }}">{{ page }}</a></li>
+            {% endfor %}
+            {% if (currentPage < pageNumber) %}
+                <li class="page-item"><a class="page-link" href="{{ path(paginationPath, {"page": currentPage + 1}) }}">Suivant</a></li>
+            {% endif %}
+        </ul>
+    </nav>
 {% endblock %}
 
 {% block stylesheets %}

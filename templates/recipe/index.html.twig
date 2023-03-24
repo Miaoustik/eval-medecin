@@ -27,13 +27,16 @@
 
     <h2 class="mt-5 mb-4 text-decoration-underline secondTitle">Temps de préparation :</h2>
     <div class="inputStyle rounded pt-2 shadow1">
-        <p class="text-decoration-underline text-secondary text-center">Temps total : 1h30min</p>
+
+        {# TODO filter min in hour !! #}
+
+        <p class="text-decoration-underline text-secondary text-center">Temps total : {{ recipe.preparationTime + recipe.breakTime + recipe.cookingTime }} min</p>
         <div class="d-flex justify-content-around">
-            <p class="prep text-center text-secondary">Préparation : 30min</p>
+            <p class="prep text-center text-secondary">Préparation : {{ recipe.preparationTime }} min</p>
             <div class="barrePrep"></div>
-            <p class="repos text-center text-secondary">Repos : 30min</p>
+            <p class="repos text-center text-secondary">Repos : {{ recipe.breakTime }} min</p>
             <div class="barrePrep"></div>
-            <p class="cuisson text-center text-secondary">Cuisson : 30min</p>
+            <p class="cuisson text-center text-secondary">Cuisson : {{ recipe.cookingTime }} min</p>
         </div>
     </div>
     <h2 class="secondTitle  text-decoration-underline mt-5">Etapes :</h2>

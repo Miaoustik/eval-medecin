@@ -23,6 +23,7 @@ export default function useInputCheckbox (items = []) {
 
     return useMemo(() => ({
         inputs,
-        handleChange
-    }), [items, inputs, handleChange])
+        handleChange,
+        setInputs
+    }), [items, inputs, handleChange, setInputs])
 }

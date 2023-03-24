@@ -14,10 +14,11 @@ class Ingredient implements \JsonSerializable
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['GET_recipe_read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255, unique: true)]
-    #[Groups(['POST_admin_createRecipe'])]
+    #[Groups(['POST_admin_createRecipe', 'GET_recipe_read'])]
     private ?string $name = null;
 
     public function getId(): ?int
