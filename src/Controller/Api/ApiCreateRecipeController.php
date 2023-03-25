@@ -30,7 +30,9 @@ class ApiCreateRecipeController
             foreach ($ingredientsData as $newIngredient) {
 
                 if ($newIngredient->getIngredient()->getName() === $ingredientWithId->getName()) {
-
+                    if ($newIngredient->getIngredient()->getName() === 'Huile') {
+                        //dd($newIngredient->getIngredient()->getName() === $ingredientWithId->getName());
+                    }
                     $ingredientRecipe = (new IngredientRecipe())
                         ->setIngredient($ingredientWithId)
                         ->setQuantity($newIngredient->getQuantity());
@@ -40,7 +42,6 @@ class ApiCreateRecipeController
                 }
             }
         }
-        dd($data);
         return $data;
     }
 }

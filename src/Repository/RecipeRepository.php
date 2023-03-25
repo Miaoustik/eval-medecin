@@ -42,6 +42,20 @@ class RecipeRepository extends ServiceEntityRepository
         }
     }
 
+    public function findTest ($id): ?Recipe
+    {
+        return $this->createQueryBuilder('r')
+            ->select('r', 'ir', 'd', 'a')
+            ->leftJoin('r.ingredientRecipes', 'ir')
+            ->leftJoin('r.diets', 'd')
+            ->leftJoin('r.allergens', 'a')
+            ->where('r.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+    }
+
 //    /**
 //     * @return Recipe[] Returns an array of Recipe objects
 //     */

@@ -69,7 +69,7 @@ class IngredientRepository extends ServiceEntityRepository
         $params = [];
         foreach ( $ingredients as $k => $ingredient) {
             $qb = $qb->orWhere("i.name = :name$k");
-            $params["name$k"] = $ingredient;
+            $params["name$k"] = $ingredient[0];
         }
 
         $qb->setParameters($params);

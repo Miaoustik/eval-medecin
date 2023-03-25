@@ -22,7 +22,7 @@ export default function App ({recipeid = null , diets, allergens }) {
             fetch('/api/recipes/' + recipeid, fetchRecipeOption)
                 .then(res => res.json())
                 .then(data => {
-
+                    console.log(data.ingredientRecipes)
                     setTitleInput(data.title)
                     setDescriptionInput(data.description)
                     setPreps( prevState => {
@@ -64,11 +64,13 @@ export default function App ({recipeid = null , diets, allergens }) {
                             if (index === 1) {
                                 newState[0].quantity = value.quantity
                                 newState[0].name = value.ingredient.name
+                                newState[0].realId = value.id
                             } else {
                                 newState.push({
                                     id: newState[newState.length - 1].id + 1,
                                     quantity: value.quantity,
-                                    name: value.ingredient.name
+                                    name: value.ingredient.name,
+                                    realId: value.id
                                 })
                             }
                         })
@@ -175,12 +177,21 @@ export default function App ({recipeid = null , diets, allergens }) {
             'breakTime' : preps.repos === '' ? 0 : parseInt(preps.repos, 10),
             'cookingTime' : preps.cuisson === '' ? 0 : parseInt(preps.cuisson, 10),
             "ingredientRecipes" : ingredientsInputGroup.inputs.map(e => {
-                return {
-                    "quantity": e['quantity'],
-                    "ingredient": {
-                        "name": e['name']
+
+                const value = {
+                    quantity: e.quantity,
+                    ingredient: {
+                        name: e.name
                     }
                 }
+
+                if (e.realId) {
+                    value['@id'] = '/api/ingredient_ recipes/' + e.realId
+                    value.recipe = '/api/recipes/' + recipeid
+                }
+
+                return value
+
             }),
             "stages" : stagesInputGroup.inputs.map(e => e.stage),
             'allergens' : [],
@@ -188,7 +199,7 @@ export default function App ({recipeid = null , diets, allergens }) {
         }
 
         if (recipeid) {
-            recipe['@id'] = recipeid
+            recipe['@id'] = '/api/recipes/' + recipeid
         }
 
         allergensCheckbox.inputs.forEach(input => {
@@ -222,15 +233,17 @@ export default function App ({recipeid = null , diets, allergens }) {
         })
 
         const requestOptions = {
-            method: recipeid ? 'PUT' : 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method: recipeid ? 'PATCH' : 'POST',
+            headers: { 'Content-Type': recipeid ? 'application/merge-patch+json' : 'application/json' },
             body: JSON.stringify(recipe)
         };
 
-        fetch(recipeid ? ('/api/recipes/' + recipeid) : '/api/recipes', requestOptions)
+        console.log(recipe)
+
+        /*fetch(recipeid ? ('/api/recipes/' + recipeid) : '/api/recipes', requestOptions)
             .then(res => res.json())
             .then(data => console.log(data))
-            .catch(e => console.log(e))
+            .catch(e => console.log(e))*/
 
         setSubmitted(true)
 

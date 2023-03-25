@@ -28,15 +28,19 @@ use Symfony\Component\Serializer\Annotation\Groups;
             security: "is_granted('ROLE_ADMIN')"
         ),
         new Delete(),
-        new Patch(
-            controller: ApiCreateRecipeController::class,
+        new Put(
+            controller: ApiModifyRecipeController::class,
             denormalizationContext: [
                 'groups' => ['POST_admin_createRecipe']
             ],
             security: "is_granted('ROLE_ADMIN')"
         ),
-        new Put(
-
+        new Patch(
+            controller: ApiModifyRecipeController::class,
+            denormalizationContext: [
+                'groups' => ['POST_admin_createRecipe']
+            ],
+            security: "is_granted('ROLE_ADMIN')"
         ),
         new Get(
             normalizationContext: [
@@ -51,7 +55,7 @@ class Recipe implements \JsonSerializable
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['GET_recipe_read'])]
+    #[Groups(['GET_recipe_read', 'POST_admin_createRecipe'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -313,7 +317,17 @@ class Recipe implements \JsonSerializable
     public function jsonSerialize(): mixed
     {
         return [
-            'id' => $this->id
+            'id' => $this->id,
+            'title' => $this->title,
+            'desciption' => $this->description,
+            'preparationTime' => $this->preparationTime,
+            'breakTime' => $this->breakTime,
+            'cookingTime' => $this->cookingTime,
+            'ingredientRecipes' => $this->ingredientRecipes,
+            'stages' => $this->stages,
+            'allergens' => $this->getAllergens(),
+            'diets' => $this->diets,
+            'notices' => $this->notices,
         ];
     }
 }

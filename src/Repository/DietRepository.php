@@ -63,4 +63,19 @@ class DietRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function findByIds(array $allergenIds)
+    {
+        $qb = $this->createQueryBuilder('a');
+        $params = [];
+
+        foreach ($allergenIds as $index => $allergenId) {
+            $qb->orWhere('a.id = :id' . $index);
+            $params[':id' . $index] = $allergenId;
+        }
+
+        return $qb
+            ->setParameters($params)
+            ->getQuery()
+            ->getResult();
+    }
 }

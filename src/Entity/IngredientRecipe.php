@@ -24,6 +24,7 @@ class IngredientRecipe
 
     #[ORM\ManyToOne(inversedBy: 'ingredientRecipes')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['POST_admin_createRecipe'])]
     private ?Recipe $recipe = null;
 
     #[ORM\Column]
