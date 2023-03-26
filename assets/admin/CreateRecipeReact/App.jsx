@@ -1,13 +1,46 @@
-import React, {useCallback, useEffect, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import InputGroupList from "./Components/InputGroupList";
 import useInputGroupList from "./Hooks/useInputGroupList";
 import useInputCheckbox from "./Hooks/useInputCheckbox";
 import InputCheckbox from "./Components/InputCheckbox";
 import {capitalizeFirstLetter} from "./Utils/functions";
 
-export default function App ({recipeid = null , diets, allergens }) {
+export default function App ({recipeid = null}) {
+
+    const dataRef = useRef({
+        diets: null,
+        allergens: null,
+        error: false
+    })
+
 
     useEffect(() => {
+
+        setLoading(true)
+
+
+        function setCheckbox (prevState, values, checkedValues = null) {
+            const newState = []
+            values.forEach((v) => {
+                newState.push({
+                    id: v.id,
+                    name: v.name,
+                    checked: false
+                })
+            })
+            if (checkedValues) {
+                checkedValues.forEach((v) => {
+                    newState.forEach((e) => {
+                        if (e.id == v.id) {
+                            e.checked = true
+                        }
+                    })
+                })
+            }
+
+
+            return newState
+        }
 
         const controller = new AbortController()
 
@@ -19,10 +52,19 @@ export default function App ({recipeid = null , diets, allergens }) {
                 }
             }
 
-            fetch('/api/recipes/' + recipeid, fetchRecipeOption)
+            fetch('/admin/modifier-recette/api/getdata/' + recipeid, fetchRecipeOption)
                 .then(res => res.json())
-                .then(data => {
-                    console.log(data.ingredientRecipes)
+                .then(dataArray => {
+                    console.log(dataArray[0])
+                    const data = dataArray[0]
+                    const diets = dataArray[1]
+                    const allergens = dataArray[2]
+
+                    dataRef.current = {
+                        diets,
+                        allergens
+                    }
+
                     setTitleInput(data.title)
                     setDescriptionInput(data.description)
                     setPreps( prevState => {
@@ -36,26 +78,14 @@ export default function App ({recipeid = null , diets, allergens }) {
                         return newState
                     })
 
-                    function setCheckbox (prevState, dataValue) {
-                        const newState = [...prevState]
-                        dataValue.forEach((iriAllergen, k) => {
-                            const iriAllergenId = iriAllergen.split('/')
-                            const iriId = iriAllergenId[iriAllergenId.length - 1]
-                            newState.forEach((e) => {
-                                if (e.id == iriId) {
-                                    e.checked = true
-                                }
-                            })
-                        })
-                        return newState
-                    }
+
 
                     allergensCheckbox.setInputs(prevState => {
-                        return setCheckbox(prevState, data.allergens)
+                        return setCheckbox(prevState, allergens, data.allergens)
                     })
 
                     dietsCheckbox.setInputs(prevState => {
-                        return setCheckbox(prevState, data.diets)
+                        return setCheckbox(prevState, diets, data.diets)
                     })
 
                     ingredientsInputGroup.setInputs(prevState => {
@@ -65,12 +95,14 @@ export default function App ({recipeid = null , diets, allergens }) {
                                 newState[0].quantity = value.quantity
                                 newState[0].name = value.ingredient.name
                                 newState[0].realId = value.id
+                                newState[0].error = ''
                             } else {
                                 newState.push({
                                     id: newState[newState.length - 1].id + 1,
                                     quantity: value.quantity,
                                     name: value.ingredient.name,
-                                    realId: value.id
+                                    realId: value.id,
+                                    error: ''
                                 })
                             }
                         })
@@ -91,16 +123,38 @@ export default function App ({recipeid = null , diets, allergens }) {
                         })
                         return newState
                     })
-
-                    console.log(data, stagesInputGroup.inputs)
                 })
+                .finally(() => setLoading(false))
+        } else {
+            const fetchOption = {
+                signal: controller.signal,
+                headers: {
+                    Accept: 'application/json'
+                }
+            }
+            fetch('/admin/creer-recette/api/getdata', fetchOption)
+                .then(res => res.json())
+                .then(dataArray => {
+                    allergensCheckbox.setInputs(prevState => {
+                        return setCheckbox(prevState, dataArray[1])
+                    })
+
+                    dietsCheckbox.setInputs(prevState => {
+                        return setCheckbox(prevState, dataArray[1])
+                    })
+                })
+                .catch(e => console.log(e))
+                .finally(() => setLoading(false))
         }
+
+
         return () => {
             controller.abort();
         }
 
     }, [])
 
+    const [loading, setLoading] = useState(false)
     const [titleInput, setTitleInput] = useState('')
     const [descriptionInput, setDescriptionInput] = useState('')
 
@@ -109,17 +163,9 @@ export default function App ({recipeid = null , diets, allergens }) {
     const allergensInputGroup = useInputGroupList(['name'], false)
     const dietsInputGroup = useInputGroupList(['name'], false)
 
-    const dietsParse = useMemo(() => {
-        return JSON.parse(diets)
-    }, [diets])
+    const dietsCheckbox = useInputCheckbox([])
 
-    const dietsCheckbox = useInputCheckbox(dietsParse)
-
-    const allergensParse = useMemo(() => {
-        return JSON.parse(allergens)
-    }, [allergens])
-
-    const allergensCheckbox = useInputCheckbox(allergensParse)
+    const allergensCheckbox = useInputCheckbox([])
 
     const [trySubmitted, setTrySubmitted] = useState(false)
     const [submitted, setSubmitted] = useState(false)
@@ -170,6 +216,24 @@ export default function App ({recipeid = null , diets, allergens }) {
 
         e.preventDefault()
 
+        //dietinputforeach
+
+        function checkDuplicate ( inputs, checkInputs) {
+            inputs.inputs.forEach((i, k) => {
+                checkInputs.inputs.forEach(c => {
+                    if (i.name === c.name) {
+                        inputs.setInputs(prevState => {
+                            const newState = [...prevState]
+                            newState[k].error = "L'entité éxistes déjà."
+                            return newState
+                        })
+                    }
+                })
+            })
+        }
+
+        checkDuplicate(dietsInputGroup, dietsCheckbox)
+
         const recipe = {
             'title' : titleInput,
             'description' : descriptionInput,
@@ -186,8 +250,8 @@ export default function App ({recipeid = null , diets, allergens }) {
                 }
 
                 if (e.realId) {
-                    value['@id'] = '/api/ingredient_ recipes/' + e.realId
-                    value.recipe = '/api/recipes/' + recipeid
+                    value['id'] = e.realId
+                    value.recipe = recipeid
                 }
 
                 return value
@@ -199,14 +263,17 @@ export default function App ({recipeid = null , diets, allergens }) {
         }
 
         if (recipeid) {
-            recipe['@id'] = '/api/recipes/' + recipeid
+            recipe['id'] = recipeid
         }
 
         allergensCheckbox.inputs.forEach(input => {
+
             if (input.checked === true) {
-                recipe.allergens.push('/api/allergens/' + input.id)
+                recipe.allergens.push(input.id)
             }
         })
+
+        console.log(recipe.allergens)
 
         allergensInputGroup.inputs.forEach(input => {
             if (input.name !== '') {
@@ -219,7 +286,7 @@ export default function App ({recipeid = null , diets, allergens }) {
 
         dietsCheckbox.inputs.forEach(input => {
             if (input.checked === true) {
-                recipe.diets.push('/api/diets/' + input.id)
+                recipe.diets.push(input.id)
             }
         })
 
@@ -233,19 +300,24 @@ export default function App ({recipeid = null , diets, allergens }) {
         })
 
         const requestOptions = {
-            method: recipeid ? 'PATCH' : 'POST',
-            headers: { 'Content-Type': recipeid ? 'application/merge-patch+json' : 'application/json' },
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(recipe)
         };
 
         console.log(recipe)
 
-        /*fetch(recipeid ? ('/api/recipes/' + recipeid) : '/api/recipes', requestOptions)
-            .then(res => res.json())
-            .then(data => console.log(data))
-            .catch(e => console.log(e))*/
+        if (dataRef.current.error === false) {
+            fetch('/admin/modifier-recette/api/modify', requestOptions)
+                .then(res => res.json())
+                .then(data => console.log(data))
+                .catch(e => console.log(e))
 
-        setSubmitted(true)
+            setSubmitted(true)
+        } else {
+            setTrySubmitted(false);
+        }
+
 
     }, [
         titleInput,
@@ -262,6 +334,11 @@ export default function App ({recipeid = null , diets, allergens }) {
     }
 
     //TODO patient Only
+
+
+    if (loading) {
+        return <p>Chargement...</p>
+    }
 
     return (
         <>

@@ -2,20 +2,15 @@ import {useCallback, useMemo, useState} from "react";
 
 export default function useInputCheckbox (items = []) {
 
-    const itemsObj = items.map((v) => {
-        return {
-            'id' : v.id,
-            'name' : v.name,
-            'checked' : false
-        }
-    })
 
-    const [inputs, setInputs ] = useState(itemsObj)
+
+    const [inputs, setInputs ] = useState(items)
 
     const handleChange = useCallback((e) => {
         setInputs(prevState => {
             const newState = [...prevState]
             newState[e.target.getAttribute('data-index')]['checked'] = !newState[e.target.getAttribute('data-index')]['checked']
+            console.log(newState)
             return newState
         })
     }, [])

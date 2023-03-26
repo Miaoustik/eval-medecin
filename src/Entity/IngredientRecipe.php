@@ -2,24 +2,22 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
 use App\Repository\IngredientRecipeRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: IngredientRecipeRepository::class)]
-#[ApiResource]
 class IngredientRecipe
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['GET_recipe_read'])]
+    #[Groups(['MODIFY_RECIPE'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['POST_admin_createRecipe', 'GET_recipe_read'])]
+    #[Groups(['MODIFY_RECIPE'])]
     private ?Ingredient $ingredient = null;
 
     #[ORM\ManyToOne(inversedBy: 'ingredientRecipes')]
@@ -28,7 +26,7 @@ class IngredientRecipe
     private ?Recipe $recipe = null;
 
     #[ORM\Column]
-    #[Groups(['POST_admin_createRecipe', 'GET_recipe_read'])]
+    #[Groups(['MODIFY_RECIPE'])]
     private ?string $quantity = null;
 
     public function getId(): ?int

@@ -2,14 +2,6 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Delete;
-use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\Patch;
-use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Put;
-use App\Controller\Api\ApiCreateRecipeController;
-use App\Controller\Api\ApiModifyRecipeController;
 use App\Repository\RecipeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -18,87 +10,55 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: RecipeRepository::class)]
-#[ApiResource(
-    operations: [
-        new Post(
-            controller: ApiCreateRecipeController::class,
-            denormalizationContext: [
-                'groups' => ['POST_admin_createRecipe']
-            ],
-            security: "is_granted('ROLE_ADMIN')"
-        ),
-        new Delete(),
-        new Put(
-            controller: ApiModifyRecipeController::class,
-            denormalizationContext: [
-                'groups' => ['POST_admin_createRecipe']
-            ],
-            security: "is_granted('ROLE_ADMIN')"
-        ),
-        new Patch(
-            controller: ApiModifyRecipeController::class,
-            denormalizationContext: [
-                'groups' => ['POST_admin_createRecipe']
-            ],
-            security: "is_granted('ROLE_ADMIN')"
-        ),
-        new Get(
-            normalizationContext: [
-                'groups' => ['GET_recipe_read']
-            ]
-        )
-    ],
-
-)]
-class Recipe implements \JsonSerializable
+class Recipe
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['GET_recipe_read', 'POST_admin_createRecipe'])]
+    #[Groups(['MODIFY_RECIPE'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['POST_admin_createRecipe', 'GET_recipe_read'])]
+    #[Groups(['MODIFY_RECIPE'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['POST_admin_createRecipe', 'GET_recipe_read'])]
+    #[Groups(['MODIFY_RECIPE'])]
     private ?string $description = null;
 
     #[ORM\Column]
-    #[Groups(['POST_admin_createRecipe', 'GET_recipe_read'])]
+    #[Groups(['MODIFY_RECIPE'])]
     private ?int $preparationTime = null;
 
     #[ORM\Column]
-    #[Groups(['POST_admin_createRecipe', 'GET_recipe_read'])]
+    #[Groups(['MODIFY_RECIPE'])]
     private ?int $breakTime = null;
 
     #[ORM\Column]
-    #[Groups(['POST_admin_createRecipe', 'GET_recipe_read'])]
+    #[Groups(['MODIFY_RECIPE'])]
     private ?int $cookingTime = null;
 
     #[ORM\Column]
-    #[Groups(['POST_admin_createRecipe', 'GET_recipe_read'])]
+    #[Groups(['MODIFY_RECIPE'])]
     private ?bool $patientOnly = false;
 
     #[ORM\OneToMany(mappedBy: 'recipe', targetEntity: IngredientRecipe::class, cascade: ['persist', 'remove'])]
-    #[Groups(['POST_admin_createRecipe', 'GET_recipe_read'])]
+    #[Groups(['MODIFY_RECIPE'])]
     private Collection $ingredientRecipes;
 
     #[ORM\OneToMany(mappedBy: 'recipe', targetEntity: Notice::class, cascade: ['persist', 'remove'])]
     private Collection $notices;
 
     #[ORM\Column()]
-    #[Groups(['POST_admin_createRecipe', 'GET_recipe_read'])]
+    #[Groups(['MODIFY_RECIPE'])]
     private array $stages = [];
 
     #[ORM\ManyToMany(targetEntity: Diet::class, inversedBy: 'recipes', cascade: ['persist'])]
-    #[Groups(['POST_admin_createRecipe', 'GET_recipe_read'])]
+    #[Groups(['MODIFY_RECIPE'])]
     private Collection $diets;
 
     #[ORM\ManyToMany(targetEntity: Allergen::class, inversedBy: 'recipes', cascade: ['persist'])]
-    #[Groups(['POST_admin_createRecipe', 'GET_recipe_read'])]
+    #[Groups(['MODIFY_RECIPE'])]
     private Collection $allergens;
 
 
@@ -311,23 +271,5 @@ class Recipe implements \JsonSerializable
         $this->allergens->removeElement($allergen);
 
         return $this;
-    }
-
-
-    public function jsonSerialize(): mixed
-    {
-        return [
-            'id' => $this->id,
-            'title' => $this->title,
-            'desciption' => $this->description,
-            'preparationTime' => $this->preparationTime,
-            'breakTime' => $this->breakTime,
-            'cookingTime' => $this->cookingTime,
-            'ingredientRecipes' => $this->ingredientRecipes,
-            'stages' => $this->stages,
-            'allergens' => $this->getAllergens(),
-            'diets' => $this->diets,
-            'notices' => $this->notices,
-        ];
     }
 }

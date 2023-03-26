@@ -23,38 +23,45 @@ export default function (
                 <div className={containerClass}>
                     {((inputs.length > 1) || (inputs.length === 1 && first === true)) && inputs.map((value, index) => {
                         return (
-                            <div key={value.id} className={divClass}>
-                                {inputNames.map((v, k) => {
-                                    if (type === 'textarea') {
+                            <React.Fragment key={value.id + 'input'} >
+                                <div className={divClass}>
+                                    {inputNames.map((v, k) => {
+                                        if (type === 'textarea') {
+                                            return (
+                                                <textarea
+                                                    key={value.id + v}
+                                                    data-index={index}
+                                                    data-inputname={v}
+                                                    onChange={handleChange}
+                                                    className={inputClass + ' ' + (k === inputNames.length - 1 ? '' : 'me-3')}
+                                                    value={value[v]}
+                                                    placeholder={placeholders[k]}
+                                                >
+                                                </textarea>
+                                            )
+                                        }
                                         return (
-                                            <textarea
-                                                key={value.id + v}
-                                                data-index={index}
-                                                data-inputname={v}
-                                                onChange={handleChange}
-                                                className={inputClass + ' ' + (k === inputNames.length - 1 ? '' : 'me-3')}
-                                                value={value[v]}
-                                                placeholder={placeholders[k]}
-                                            >
-                                            </textarea>
+                                            <React.Fragment key={value.id + v}>
+                                                <input
+                                                    data-index={index}
+                                                    data-inputname={v}
+                                                    onChange={handleChange}
+                                                    className={inputClass  + ' ' + (k === inputNames.length - 1 ? '' : 'me-3') + (value.error !== '' ? ' is-invalid' : '') + ' ingredient'}
+                                                    type={type}
+                                                    value={value[v]}
+                                                    placeholder={placeholders[k]}
+                                                    id={index + 'error'}
+                                                />
+                                            </React.Fragment>
                                         )
-                                    }
-                                    return (
-                                        <input
-                                            key={value.id + v}
-                                            data-index={index}
-                                            data-inputname={v}
-                                            onChange={handleChange}
-                                            className={inputClass  + ' ' + (k === inputNames.length - 1 ? '' : 'me-3') + ' ingredient'}
-                                            type={type}
-                                            value={value[v]}
-                                            placeholder={placeholders[k]}
-                                        />
-                                    )
-                                })}
-                                {(inputs.length > 1 || firstRequired === false)  && <button className={btnRemoveClass} data-index={index}
-                                         onClick={handleRemove}>X</button>}
-                            </div>
+                                    })}
+                                    {(inputs.length > 1 || firstRequired === false)  && <button className={btnRemoveClass} data-index={index}
+                                             onClick={handleRemove}>X</button>}
+                                </div>
+                                <div id={index + "error"} className="invalid-feedback">
+                                    {value.error}
+                                </div>
+                            </React.Fragment>
                         )
                     })}
                     <button className={btnAddClass} onClick={handleAdd}>{btnAddText}</button>

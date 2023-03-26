@@ -140,5 +140,9 @@ class RecipeRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    public function getData($id)
+    {
+    }
+
 
 }

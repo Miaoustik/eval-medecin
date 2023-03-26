@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
 use App\Repository\DietRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -10,16 +9,16 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: DietRepository::class)]
-#[ApiResource]
-class Diet implements \JsonSerializable
+class Diet
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['MODIFY_RECIPE'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255, unique: true)]
-    #[Groups(['POST_admin_createRecipe'])]
+    #[Groups(['MODIFY_RECIPE'])]
     private ?string $name = null;
 
     #[ORM\ManyToMany(targetEntity: Recipe::class, mappedBy: 'diets')]
@@ -83,6 +82,5 @@ class Diet implements \JsonSerializable
 
         return $this;
     }
-
 
 }

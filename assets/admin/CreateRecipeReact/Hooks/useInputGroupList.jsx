@@ -1,10 +1,11 @@
 import {useCallback, useMemo, useState} from "react";
 
-export default function useInputGroupList (inputNames = [], firstRequired = true) {
+export default function useInputGroupList (inputNames = [], firstRequired = true, valid = false) {
 
     let initialValue = [
         {
             'id' : 1,
+            'error' : ''
         }
     ]
 
@@ -49,7 +50,8 @@ export default function useInputGroupList (inputNames = [], firstRequired = true
                 const newState = [...prevState]
                 const newId = newState[newState.length - 1].id + 1
                 const newValue = {
-                    id: newId
+                    id: newId,
+                    error: ''
                 }
                 inputNames.forEach(v => {
                     newValue[v] = ''
