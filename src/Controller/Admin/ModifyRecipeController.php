@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route(path: '/admin/modifier-recette')]
@@ -59,10 +60,10 @@ class ModifyRecipeController extends AbstractController
         EntityManagerInterface $entityManager
     ): Response
     {
-        $data = json_decode($request->getContent(), true);
-        //dd($data);
+        $data = json_decode($request->getContent());
 
-        $recipe = $recipeRepository->findTest($data['id']);
+        $recipe = $recipeRepository->findTest($data->id);
+        //dd($data, $recipe);
 
         function getItems ($data, $repository, $recipe) {
 
@@ -77,6 +78,8 @@ class ModifyRecipeController extends AbstractController
             }
 
             $allergens = $repository->findByIds($ids);
+
+
 
             $str = explode('\\', $repository->getClassName());
             $str = end($str);
@@ -100,23 +103,27 @@ class ModifyRecipeController extends AbstractController
 
         }
 
-        getItems($data['allergens'], $allergenRepository, $recipe);
-        getItems($data['diets'], $dietRepository, $recipe);
+        //dd($recipe);
 
-        $recipe->setTitle($data['title'])
-            ->setDescription($data['description'])
-            ->setPreparationTime($data['preparationTime'])
-            ->setBreakTime($data['breakTime'])
-            ->setCookingTime($data['cookingTime']);
+        getItems($data->allergens, $allergenRepository, $recipe);
+        getItems($data->diets, $dietRepository, $recipe);
+
+        //dd($recipe);
+
+        $recipe->setTitle($data->title)
+            ->setDescription($data->description)
+            ->setPreparationTime($data->preparationTime)
+            ->setBreakTime($data->breakTime)
+            ->setCookingTime($data->cookingTime);
 
 
         $ingredientsRecipes = $recipe->getIngredientRecipes();
         $ingredients = array_map(function ($e) {
             return [
-                $e['ingredient']['name'],
-                $e['quantity']
+                $e->ingredient->name,
+                $e->quantity
             ];
-        }, $data['ingredientRecipes']);
+        }, $data->ingredientRecipes);
 
         foreach($ingredientsRecipes as $index => $ingredientsRecipe) {
             if (!isset($ingredients[$index])) {
@@ -162,7 +169,7 @@ class ModifyRecipeController extends AbstractController
             }
         }
 
-        $recipe->setStages($data['stages']);
+        $recipe->setStages($data->stages);
 
         try {
             $entityManager->flush();
@@ -170,11 +177,7 @@ class ModifyRecipeController extends AbstractController
             return new JsonResponse(data: json_encode($e->getMessage(), JSON_UNESCAPED_UNICODE), status: 404 , json: true);
         }
 
-        $recipeJson = $this->serializer->serialize($recipe, JsonEncoder::FORMAT, [
-            'groups' => ['MODIFY_RECIPE']
-        ]);
-
-        return new JsonResponse(data: $recipeJson, json: true);
+        return new JsonResponse(status: 200);
     }
 
 }

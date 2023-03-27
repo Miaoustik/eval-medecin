@@ -35,7 +35,11 @@ export default function useInputGroupList (inputNames = [], firstRequired = true
 
         setInputs(prevState => {
             const newState = [...prevState]
-            newState.splice(index, 1)
+            if (newState.length > 1 ) {
+                newState.splice(index, 1)
+            } else {
+                setFirst(false)
+            }
             return newState
         })
     }, [])
@@ -71,6 +75,7 @@ export default function useInputGroupList (inputNames = [], firstRequired = true
         setInputs,
         inputNames,
         firstRequired,
-        first
-    }), [inputs, handleAdd, handleChange, handleRemove, setInputs, inputNames, firstRequired, first])
+        first,
+        valid
+    }), [inputs, handleAdd, handleChange, handleRemove, setInputs, inputNames, firstRequired, first, valid])
 }

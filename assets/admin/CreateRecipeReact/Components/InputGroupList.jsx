@@ -16,7 +16,9 @@ export default function (
         firstRequired,
         containerClass = 'mt-4',
         placeholders = [],
-        first
+        first,
+        valid,
+        handleBlur = null
     })
 {
     return (
@@ -36,31 +38,37 @@ export default function (
                                                     className={inputClass + ' ' + (k === inputNames.length - 1 ? '' : 'me-3')}
                                                     value={value[v]}
                                                     placeholder={placeholders[k]}
+                                                    onBlur={handleBlur}
+
                                                 >
                                                 </textarea>
                                             )
                                         }
                                         return (
-                                            <React.Fragment key={value.id + v}>
+                                            <div key={value.id + v} className={'w-100'}>
                                                 <input
                                                     data-index={index}
                                                     data-inputname={v}
                                                     onChange={handleChange}
-                                                    className={inputClass  + ' ' + (k === inputNames.length - 1 ? '' : 'me-3') + (value.error !== '' ? ' is-invalid' : '') + ' ingredient'}
+                                                    className={inputClass  + ' ' + (k === inputNames.length - 1 ? '' : 'me-3') + ((value.error !== '' && valid) ? (value.error === 'good' ? ' is-valid' : 'is-invalid') : '') + ' ingredient'}
                                                     type={type}
                                                     value={value[v]}
                                                     placeholder={placeholders[k]}
                                                     id={index + 'error'}
+                                                    onBlur={handleBlur}
                                                 />
-                                            </React.Fragment>
+                                                {valid &&   //
+                                                    <div id={index + "error"} className={((value.error !== '' && valid) ? (value.error === 'good' ? ' valid-feedback' : ' invalid-feedback') : '')}>
+                                                        {value.error === 'good' ? "L'entité va être crée." : value.error}
+                                                    </div>
+                                                }
+                                            </div>
                                         )
                                     })}
                                     {(inputs.length > 1 || firstRequired === false)  && <button className={btnRemoveClass} data-index={index}
                                              onClick={handleRemove}>X</button>}
                                 </div>
-                                <div id={index + "error"} className="invalid-feedback">
-                                    {value.error}
-                                </div>
+
                             </React.Fragment>
                         )
                     })}

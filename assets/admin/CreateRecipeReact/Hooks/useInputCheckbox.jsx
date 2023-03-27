@@ -10,7 +10,6 @@ export default function useInputCheckbox (items = []) {
         setInputs(prevState => {
             const newState = [...prevState]
             newState[e.target.getAttribute('data-index')]['checked'] = !newState[e.target.getAttribute('data-index')]['checked']
-            console.log(newState)
             return newState
         })
     }, [])

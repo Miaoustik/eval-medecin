@@ -272,4 +272,11 @@ class Recipe
 
         return $this;
     }
+
+    public function reIndex ($arr)
+    {
+        /** @var Collection<int, > $allergens */
+        $allergens = array_values((array)$this->allergens);
+        return array_values($arr);
+    }
 }
