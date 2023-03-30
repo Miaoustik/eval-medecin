@@ -50,7 +50,7 @@ export default function (
                                                     data-index={index}
                                                     data-inputname={v}
                                                     onChange={handleChange}
-                                                    className={inputClass  + ' ' + (k === inputNames.length - 1 ? '' : 'me-3') + ((value.error !== '' && valid) ? (value.error === 'ok' ? ' is-valid' : 'is-invalid') : '') + ' ingredient'}
+                                                    className={inputClass  + ' ' + (k === inputNames.length - 1 ? 'ms-1' : 'me-3') + ((value.error !== '' && valid) ? (value.error === 'ok' ? ' is-valid' : 'is-invalid') : '') + ' ingredient'}
                                                     type={type}
                                                     value={value[v]}
                                                     placeholder={placeholders[k]}

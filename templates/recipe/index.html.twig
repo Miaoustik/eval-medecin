@@ -48,6 +48,8 @@
             </li>
         {% endfor %}
     </ul>
+
+    {% if not is_granted('ROLE_ADMIN') %}
     <div class="inputStyle rounded shadow1">
         <p class="text-center text-secondary mb-1 pt-2">La recette est terminée.</p>
         <p class="text-center textNoto avisInterresse mb-1">Votre avis m'intérresse</p>
@@ -69,6 +71,7 @@
             </svg>
         </div>
     </div>
+    {% endif %}
 {% endblock %}
 
 {% block stylesheets %}

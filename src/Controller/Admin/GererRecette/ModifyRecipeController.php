@@ -16,7 +16,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route(path: '/admin/modifier-recette')]
@@ -63,7 +62,6 @@ class ModifyRecipeController extends AbstractController
         $data = json_decode($request->getContent());
 
         $recipe = $recipeRepository->findTest($data->id);
-        //dd($data, $recipe);
 
         function getItems ($data, $repository, $recipe) {
 
@@ -103,12 +101,8 @@ class ModifyRecipeController extends AbstractController
 
         }
 
-        //dd($recipe);
-
         getItems($data->allergens, $allergenRepository, $recipe);
         getItems($data->diets, $dietRepository, $recipe);
-
-        //dd($recipe);
 
         $recipe->setTitle($data->title)
             ->setDescription($data->description)

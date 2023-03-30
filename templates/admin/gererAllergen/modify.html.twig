@@ -1,0 +1,12 @@
+{% extends './base.html.twig' %}
+
+{% block body %}
+    <h2 class="secondTitle text-secondary mb-4">Modifier une allergie</h2>
+
+    <p class="textNoto">Nom de l'allergie actuelle : <span class="text-secondary">{{ allergen.name }}</span></p>
+
+    {% include '_flashes.html.twig' %}
+
+    {{ form(form) }}
+
+{% endblock %}

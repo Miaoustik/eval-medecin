@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Allergen;
 use App\Entity\Recipe;
+use App\Traits\findAllPaginatedByTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query;
@@ -19,6 +20,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class RecipeRepository extends ServiceEntityRepository
 {
+    use findAllPaginatedByTrait;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Recipe::class);
@@ -56,71 +59,6 @@ class RecipeRepository extends ServiceEntityRepository
 
     }
 
-//    /**
-//     * @return Recipe[] Returns an array of Recipe objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('r')
-//            ->andWhere('r.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('r.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Recipe
-//    {
-//        return $this->createQueryBuilder('r')
-//            ->andWhere('r.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
-
-    /**
-     * @param int $maxResult
-     * @param int $page
-     * @param int|string|null $property
-     * @param array|null $criteria
-     * @return Recipe[]
-     */
-    public function findAllPaginatedBy(int $maxResult, int $page = 1, mixed $property = null, array $criteria = null): array
-    {
-        $queryBuilder = $this->createQueryBuilder('r')
-            ->setMaxResults($maxResult)
-            ->setFirstResult($maxResult * ($page - 1));
-
-        if ($property) {
-            if (gettype($property) === 'array') {
-                foreach ($property as $key => $prop) {
-                    if ($key === 0) {
-                        $queryBuilder = $queryBuilder->select("r.$prop");
-                    } else {
-                        $queryBuilder = $queryBuilder->addSelect("r.$prop");
-                    }
-                }
-            } else {
-                $queryBuilder = $queryBuilder->select('r.' . $property);
-            }
-        }
-
-        if ($criteria) {
-            foreach ($criteria as $key => $crit) {
-                $queryBuilder = $queryBuilder
-                    ->andWhere("r.$key = :param")
-                    ->setParameter("param", $key);
-            }
-        }
-
-        return $queryBuilder
-            ->getQuery()
-            ->getResult();
-    }
-
     /**
      * @param int $id
      * @return Recipe|null
@@ -139,10 +77,4 @@ class RecipeRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
-
-    public function getData($id)
-    {
-    }
-
-
 }

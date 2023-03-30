@@ -1,0 +1,12 @@
+{% extends './base.html.twig' %}
+
+{% block body %}
+    <h2 class="secondTitle text-secondary mb-4">Modifier un régime</h2>
+
+    <p class="textNoto">Nom du régime actuel : <span class="text-secondary">{{ diet.name }}</span></p>
+
+    {% include '_flashes.html.twig' %}
+
+    {{ form(form) }}
+
+{% endblock %}
