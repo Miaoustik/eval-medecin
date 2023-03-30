@@ -94,7 +94,7 @@ class CreateRecipeController extends AbstractAdminController
             }
 
             foreach ($news as $new) {
-                if (trim($new) !== '') {
+                if (trim($new->name) !== '') {
                     $newObj = (new ($repository->getClassName()))
                         ->setName(ucfirst($new->name));
                     $recipe->$addMethod($newObj);

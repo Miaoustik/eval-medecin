@@ -1,6 +1,6 @@
 import {useCallback, useMemo, useState} from "react";
 
-export default function useInputGroupList (inputNames = [], firstRequired = true, valid = false) {
+export default function useInputGroupList (inputNames = [], firstRequired = true, valid = false, modify = false) {
 
     let initialValue = [
         {
@@ -14,8 +14,6 @@ export default function useInputGroupList (inputNames = [], firstRequired = true
     })
 
     const [first, setFirst] = useState(firstRequired)
-
-
     const [inputs, setInputs] = useState(initialValue)
 
     const handleChange = useCallback((e) => {

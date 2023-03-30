@@ -97,7 +97,7 @@ class ModifyRecipeController extends AbstractController
 
             foreach ($news as $new) {
                 $newObj = (new ($repository->getClassName()))
-                    ->setName(ucfirst($new['name']));
+                    ->setName(ucfirst($new->name));
                 $recipe->$addMethod($newObj);
             }
 

@@ -18,8 +18,15 @@ export default function App ({recipeid = null}) {
     const controllerRef = useRef(null)
 
     const [loading, setLoading] = useState(false)
-    const [titleInput, setTitleInput] = useState('')
-    const [descriptionInput, setDescriptionInput] = useState('')
+
+    const [titleInput, setTitleInput] = useState({
+        value: '',
+        error: ''
+    })
+    const [descriptionInput, setDescriptionInput] = useState({
+        value: '',
+        error: ''
+    })
 
     const dietsCheckbox = useInputCheckbox([])
 
@@ -58,7 +65,7 @@ export default function App ({recipeid = null}) {
                 checkedValues.forEach((v) => {
                     newState.forEach((e) => {
                         if (e.id == v.id) {
-                            e.checked = true
+                            e.checked = true // !!!
                         }
                     })
                 })
@@ -87,8 +94,14 @@ export default function App ({recipeid = null}) {
             error: 0
         }
 
-        setTitleInput(data.title)
-        setDescriptionInput(data.description)
+        setTitleInput({
+            value: data.title,
+            error : ''
+        })
+        setDescriptionInput({
+            value: data.description,
+            error : ''
+        })
         setPreps(prevState => {
 
             const newState = {...prevState}
@@ -99,6 +112,7 @@ export default function App ({recipeid = null}) {
 
             return newState
         })
+
 
 
         allergensCheckbox.setInputs(prevState => {
@@ -112,7 +126,7 @@ export default function App ({recipeid = null}) {
         ingredientsInputGroup.setInputs(prevState => {
             const newState = [...prevState]
             data.ingredientRecipes.forEach((value, index) => {
-                if (index === 1) {
+                if (index === 0) {
                     newState[0].quantity = value.quantity
                     newState[0].name = value.ingredient.name
                     newState[0].realId = value.id
@@ -133,7 +147,7 @@ export default function App ({recipeid = null}) {
         stagesInputGroup.setInputs(prevState => {
             const newState = [...prevState]
             data.stages.forEach((value, index) => {
-                if (index === 1) {
+                if (index === 0) {
                     newState[0].stage = value
                 } else {
                     newState.push({
@@ -166,7 +180,7 @@ export default function App ({recipeid = null}) {
                     .then(res => res.json())
                     .then(dataArray => {
                         setRecipe(dataArray, setTitleInput, setDescriptionInput, setPreps, allergensCheckbox, dietsCheckbox, ingredientsInputGroup, stagesInputGroup, dataRef)
-
+                        console.log(dataArray[0], 'entry')
                     })
                     .finally(() => setLoading(false))
             } else {
@@ -186,6 +200,7 @@ export default function App ({recipeid = null}) {
                         dietsCheckbox.setInputs(prevState => {
                             return setCheckbox(prevState, dataArray[0])
                         })
+
                     })
                     .catch(e => console.log(e))
                     .finally(() => setLoading(false))
@@ -199,11 +214,67 @@ export default function App ({recipeid = null}) {
     }, [])
 
     const handleTitleInput = useCallback((e) => {
-        setTitleInput(e.target.value)
+        setTitleInput(prevState => {
+            const newState = {...prevState}
+            newState.value = e.target.value
+            return newState
+        })
     }, [])
 
+
+    function inputSetError (setter, notValidBool, dataRef, message = 'ok', index = null) {
+
+        if (index) {
+            setter(prevState => {
+                const newState = [...prevState]
+                if (notValidBool) {
+                    if (newState[index].error !== 'Not') {
+                        dataRef.current.error++
+                    }
+                    newState[index].error = 'Not'
+                } else {
+                    if (newState[index].error === 'Not') {
+                        newState[index].error = message
+                        dataRef.current.error--
+                    }
+                }
+                return newState
+            })
+        } else {
+            setter(prevState => {
+                const newState = {...prevState}
+                if (notValidBool) {
+                    if (newState.error !== 'Not') {
+                        dataRef.current.error++
+                    }
+                    newState.error = 'Not'
+                } else {
+                    if (newState.error === 'Not') {
+                        newState.error = message
+                        dataRef.current.error--
+                    }
+                }
+                return newState
+            })
+        }
+    }
+
+    const handleBlurTitle = useCallback(() => {
+
+        inputSetError(setTitleInput, titleInput.value.length < 3, dataRef)
+
+    }, [titleInput])
+
+    const handleBlurDescription = useCallback(() => {
+        inputSetError(setDescriptionInput, descriptionInput.value.length < 5, dataRef)
+    }, [descriptionInput])
+
     const handleDescriptionInput = useCallback((e) => {
-        setDescriptionInput(e.target.value)
+        setDescriptionInput(prevState => {
+            const newState = {...prevState}
+            newState.value = e.target.value
+            return newState
+        })
     }, [])
 
 
@@ -318,7 +389,7 @@ export default function App ({recipeid = null}) {
                         if (newState[k].error === "L'entité éxistes déjà.") {
                             dataRef.current.error--
                         }
-                        newState[k].error = 'good'
+                        newState[k].error = 'ok'
                     } else {
                         if (newState[k].error !== '') {
                             dataRef.current.error--
@@ -331,55 +402,49 @@ export default function App ({recipeid = null}) {
             }
         }
 
+        function setSecondError (input, k) {
+            const error = "L'entité éxistes déjà."
+
+            if (input.error !== error) {
+                dataRef.current.error++
+                inputs.setInputs(prevState => {
+                    const newState = [...prevState]
+                    newState[k].error = error
+                    return newState
+                })
+            }
+            return error
+        }
+
+
         inputs.inputs.forEach((i, k) => {
+
             let error = ''
+
             checkInputs.inputs.forEach(c => {
                 if (i.name.toLowerCase() === c.name.toLowerCase()) {
-                    error = "L'entité éxistes déjà."
-                    if (inputs[k].error !== error) {
-                        dataRef.current.error++
-                        inputs.setInputs(prevState => {
-
-                            const newState = [...prevState]
-                            newState[k].error = error
-                            return newState
-                        })
-                    }
-
-
+                    error = setSecondError(i, k)
                 }
             })
 
-            return setErrorFunc(error, inputs, k)
-        })
-
-        inputs.inputs.forEach((i, k) => {
-            let error = ''
             inputs.inputs.forEach((c, index) => {
                 if (i.name.toLowerCase() === c.name.toLowerCase() && k !== index) {
-                    error = "L'entité éxistes déjà."
-                    dataRef.current.error++
-                    inputs.setInputs(prevState => {
-
-                        const newState = [...prevState]
-                        newState[k].error = error
-                        return newState
-                    })
+                    error = setSecondError(i, k)
                 }
             })
+
             return setErrorFunc(error, inputs, k)
         })
-
     }
 
     const handleBlurDiet = useCallback(() => {
 
-        checkDuplicate(dietsInputGroup, dietsCheckbox)
-    }, [dietsInputGroup, dietsCheckbox, checkDuplicate])
+        checkDuplicate(dietsInputGroup, dietsCheckbox, dataRef)
+    }, [dietsInputGroup, dietsCheckbox, checkDuplicate, inputSetError, dataRef])
 
     const handleBlurAllergen = useCallback(() => {
-        checkDuplicate(allergensInputGroup, allergensCheckbox)
-    }, [allergensInputGroup, allergensCheckbox, checkDuplicate])
+        checkDuplicate(allergensInputGroup, allergensCheckbox, dataRef)
+    }, [allergensInputGroup, allergensCheckbox, checkDuplicate, inputSetError, dataRef])
 
     const handleTryYes = useCallback((e) => {
         e.preventDefault()
@@ -387,8 +452,8 @@ export default function App ({recipeid = null}) {
         setSubmitted(false)
 
         const recipe = {
-            'title' : titleInput,
-            'description' : descriptionInput,
+            'title' : titleInput.value,
+            'description' : descriptionInput.value,
             'preparationTime' : preps.preparation === '' ? 0 : parseInt(preps.preparation, 10),
             'breakTime' : preps.repos === '' ? 0 : parseInt(preps.repos, 10),
             'cookingTime' : preps.cuisson === '' ? 0 : parseInt(preps.cuisson, 10),
@@ -456,7 +521,7 @@ export default function App ({recipeid = null}) {
             signal: controllerRef.current.signal
         };
 
-        console.log(recipe)
+        console.log(recipe, 'sortie')
 
         if (dataRef.current.error === 0) {
             if (recipeid) {
@@ -479,7 +544,7 @@ export default function App ({recipeid = null}) {
                     })
                     .catch(e => console.log(e))
             } else {
-                console.log(recipe)
+
                 fetch('/admin/creer-recette/api/create', requestOptions)
                     .then(res => res.json())
                     .then ((data) => {
@@ -521,15 +586,23 @@ export default function App ({recipeid = null}) {
         return <p>Chargement...</p>
     }
 
+
     return (
         <>
             <h2 className="secondTitle text-decoration-underline">{recipeid ? 'Modifier' : 'Créer'} une recette</h2>
             <form>
                 <label className="form-label text-secondary mt-4" htmlFor="title">Titre de la recette : </label>
-                <input onChange={handleTitleInput} value={titleInput} type="text" id="title" className="form-control"/>
+                <input onBlur={handleBlurTitle} onChange={handleTitleInput} value={titleInput.value} type="text" id="title" className={"form-control " + (titleInput.error !== '' ? (titleInput.error === 'ok' ? 'is-valid' : 'is-invalid') : '')}  />
+                {titleInput.error !== '' && titleInput.error !== 'ok' &&
+                    <div id={'title'} className={'invalid-feedback'}>3 lettres minimum.</div>
+                }
 
                 <label className="form-label text-secondary mt-4" htmlFor="message">Description de la recette : </label>
-                <textarea onChange={handleDescriptionInput} value={descriptionInput} id="message" className="form-control" rows="5"></textarea>
+                <textarea onBlur={handleBlurDescription} onChange={handleDescriptionInput} value={descriptionInput.value} id="message" className={"form-control " +(descriptionInput.error !== '' ? (descriptionInput.error === 'ok' ? 'is-valid' : 'is-invalid') : '')} rows="5"></textarea>
+                {descriptionInput.error !== '' && descriptionInput.error !== 'ok' &&
+                    <div id={'message'} className={'invalid-feedback'}>5 lettres minimum.</div>
+                }
+
 
                 <h3 className="mt-5 mb-3 secondTitle text-decoration-underline">Allergies de la recette : </h3>
 
@@ -546,13 +619,13 @@ export default function App ({recipeid = null}) {
                 <p className={'text-secondary text-decoration-underline'}>Temps total : {(parseIntPreps(preps.preparation) + parseIntPreps(preps.repos) + parseIntPreps(preps.cuisson))} minutes</p>
 
                 <label className="form-label mt-4 text-secondary" htmlFor="preparation">Temps de préparation : </label>
-                <input onChange={handleChange} type="number" id="preparation" className="form-control" value={preps["preparation"]}/>
+                <input min={0} onChange={handleChange} type="number" id="preparation" className="form-control" value={preps["preparation"]}/>
 
                 <label className="form-label text-secondary mt-3" htmlFor="repos">Temps de repos : </label>
-                <input onChange={handleChange} type="number" id="repos" className="form-control" value={preps["repos"]}/>
+                <input min={0} onChange={handleChange} type="number" id="repos" className="form-control" value={preps["repos"]}/>
 
                 <label className="form-label text-secondary mt-3" htmlFor="cuisson">Temps de cuisson : </label>
-                <input onChange={handleChange} type="number" id="cuisson" className="form-control" value={preps["cuisson"]}/>
+                <input min={0} onChange={handleChange} type="number" id="cuisson" className="form-control" value={preps["cuisson"]}/>
 
                 <h3 className="mt-5 mb-3 secondTitle text-decoration-underline">Ingrédients : </h3>
 
