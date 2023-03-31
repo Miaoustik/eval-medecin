@@ -36,26 +36,35 @@
                                 <a class="nav-link text-secondary" href="{{ path('contact_index') }}">Contact</a>
                             </li>
                             {% if is_granted('ROLE_ADMIN') %}
-                                <li class="nav-item">
-                                    <a class="nav-link text-secondary" href="{{ path('admin_gererRecipe_index') }}">Gérer les recettes</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-secondary" href="{{ path('admin_gererDiet_index') }}">Gérer les régimes</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-secondary" href="{{ path('admin_gererAllergen_index') }}">Gérer les allergies</a>
-                                </li>
+
+                                <div class="btn-group dropend">
+                                    <a type="button" class=" nav-link text-secondary" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Gérer
+                                    </a>
+                                    <ul class="dropdown-menu shadow1">
+                                        <li class="nav-item">
+                                            <a class="nav-link text-secondary" href="{{ path('admin_gererRecipe_index') }}">Gérer les recettes</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link text-secondary" href="{{ path('admin_gererDiet_index') }}">Gérer les régimes</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link text-secondary" href="{{ path('admin_gererAllergen_index') }}">Gérer les allergies</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link text-secondary" href="{{ path('admin_gererPatient_index') }}">Gérer les patients</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link text-secondary" href="{{ path('admin_gererIngredient_index') }}">Gérer les ingrédients</a>
+                                        </li>
+                                    </ul>
+                                </div>
+
                             {% else %}
                                 <li class="nav-item">
                                     <a class="nav-link text-secondary" href="{{ path('recipes_index') }}">Recettes</a>
                                 </li>
                             {% endif %}
-                            <li class="nav-item">
-                                <a class="nav-link text-secondary" href="{{ path('admin_createPatient_index') }}">Créer patient</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-secondary" href="{{ path('admin_createRecipe_index') }}">Créer recette</a>
-                            </li>
                         </ul>
                     </div>
                 </div>

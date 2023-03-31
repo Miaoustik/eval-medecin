@@ -2,6 +2,7 @@
 
 {% block body %}
     <h2 class="secondTitle text-secondary mb-4">Gérer les recettes</h2>
+    <a href="{{ path('admin_createRecipe_index') }}" class="btn btn-primary text-white w-100 text-decoration-none shadow1 mb-4">Créer une recette</a>
     <ul class="p-0 list-unstyled">
         {% for recipe in items %}
             <li class="lastBorder border-top border-primary ps-1">

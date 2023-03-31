@@ -1,0 +1,12 @@
+{% extends './base.html.twig' %}
+
+{% block body %}
+    <h2 class="secondTitle text-secondary mb-4">Modifier un ingrédient</h2>
+
+    <p class="textNoto">Nom actuel de l'ingrédient : <span class="text-secondary">{{ ingredient.name }}</span></p>
+
+    {% include '_flashes.html.twig' %}
+
+    {{ form(form) }}
+
+{% endblock %}

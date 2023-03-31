@@ -1,13 +1,13 @@
 {%  extends 'base.html.twig' %}
 
 {% block body %}
-    <h2 class="secondTitle text-secondary mb-4">Gérer les régimes.</h2>
+    <h2 class="secondTitle text-secondary mb-4">Gérer les ingrédients.</h2>
 
 
 
     {% include '_flashes.html.twig' %}
 
-    {% include '/admin/_gererIndexBase.html.twig' with { 'items': items, 'property': 'name', 'pathController': 'gererDiet', 'btnText': 'Créer un régime' } %}
+    {% include '/admin/_gererIndexBase.html.twig' with { 'items': items, 'property': 'name', 'pathController': 'gererIngredient', 'btnText': 'Créer un ingrédient' } %}
     {% include '_pagination.html.twig' with {currentPage, pageNumber, paginationPath} %}
 {% endblock %}
 

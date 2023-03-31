@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Admin;
+namespace App\Controller\Admin\GererRecette;
 
 use App\Entity\Ingredient;
 use App\Entity\IngredientRecipe;
@@ -27,7 +27,7 @@ class ModifyRecipeController extends AbstractController
     }
 
     #[Route(path: '/{id}', name: 'admin_modifyRecipe_index')]
-    public function index (int $id, ): Response
+    public function index (int $id): Response
     {
         return $this->render('/admin/modifyRecipe/index.html.twig', [
             "recipeId" => $id,

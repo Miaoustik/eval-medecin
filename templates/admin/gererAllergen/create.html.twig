@@ -1,0 +1,10 @@
+{% extends './base.html.twig' %}
+
+{% block body %}
+    <h2 class="secondTitle text-secondary mb-4">Créer une allergie</h2>
+
+    {% include '_flashes.html.twig' %}
+
+    {{ form(form) }}
+
+{% endblock %}

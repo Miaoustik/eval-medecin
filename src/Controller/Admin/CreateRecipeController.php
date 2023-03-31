@@ -158,7 +158,13 @@ class CreateRecipeController extends AbstractAdminController
 
         }
 
-        $recipe->setStages($data->stages);
+
+
+        $filtredStages = array_filter($data->stages, function ($e) {
+            return trim($e) !== '';
+        });
+
+        $recipe->setStages($filtredStages);
 
         //dd($recipe);
 

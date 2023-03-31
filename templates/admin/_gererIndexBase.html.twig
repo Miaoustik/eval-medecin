@@ -1,0 +1,17 @@
+<a href="{{ path('admin_' ~ pathController ~ '_create') }}" class="btn btn-primary text-white w-100 text-decoration-none shadow1">{{ btnText }}</a>
+<ul class="p-0 list-unstyled mt-3">
+    {% for item in items %}
+        <li class="lastBorder border-top border-primary ps-1">
+            <div class="d-flex align-items-center">
+                <p class="roundedSquare pt-3 textNoto">
+                    {{ attribute( item, property) }}
+                </p>
+                <a href="{{ path('admin_' ~ pathController ~ '_modify', {'id': item.id}) }}" class="ms-auto btn btn-primary text-white">Modifier</a>
+                <form action="{{ path('admin_' ~ pathController ~ '_delete', {'id': item.id}) }}" method="post">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete') }}" />
+                    <button class="ms-2 btn btn-secondary text-white" type="submit" >Supprimer</button>
+                </form>
+            </div>
+        </li>
+    {% endfor %}
+</ul>

@@ -2,32 +2,34 @@
 
 namespace App\Form;
 
-use App\Entity\Diet;
+use App\Entity\Allergen;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class DietType extends AbstractType
+class GererType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+
         $builder
             ->add('name', TextType::class, [
-                'label' => 'Nouveau nom du régime : ',
+                'label' => $options['label'],
                 'label_attr' => [
                     'class' => 'text-secondary form-label'
                 ],
                 'attr' => [
                     'class' => 'form-control',
-                    'placeholder' => 'Sans sel ...'
+                    'placeholder' => 'Noix ...'
                 ]
             ])
-            ->add('Modifier', SubmitType::class, [
+            ->add('submit', SubmitType::class, [
                 'attr' => [
-                    'class' => 'btn btn-primary text-white w-100 mt-4 shadow1'
-                ]
+                    'class' => 'btn btn-primary text-white w-100 mt-4 shadow1',
+                ],
+                'label' => $options['btnTxt']
             ])
         ;
     }
@@ -35,8 +37,7 @@ class DietType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Diet::class,
-
+            'btnTxt' => null
         ]);
     }
 }

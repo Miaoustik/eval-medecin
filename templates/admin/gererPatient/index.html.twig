@@ -1,13 +1,11 @@
 {%  extends 'base.html.twig' %}
 
 {% block body %}
-    <h2 class="secondTitle text-secondary mb-4">Gérer les régimes.</h2>
-
-
+    <h2 class="secondTitle text-secondary mb-4">Gérer les patients.</h2>
 
     {% include '_flashes.html.twig' %}
 
-    {% include '/admin/_gererIndexBase.html.twig' with { 'items': items, 'property': 'name', 'pathController': 'gererDiet', 'btnText': 'Créer un régime' } %}
+    {% include '/admin/_gererIndexBase.html.twig' with { 'items': items, 'property': 'email', 'pathController': 'gererPatient', 'btnText': 'Créer un patient' } %}
     {% include '_pagination.html.twig' with {currentPage, pageNumber, paginationPath} %}
 {% endblock %}
 

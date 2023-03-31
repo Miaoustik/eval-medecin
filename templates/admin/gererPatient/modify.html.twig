@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{%  block body %}
+    <h2 class="mb-4 mt-2 secondTitle text-decoration-underline">{% if user is defined %}Modifier{% else %} Créer {% endif %} un patient</h2>
+
+    {% include '_flashes.html.twig' %}
+
+    {% if user is defined %}
+        <form method="post" action="{{ path('admin_gererPatient_modify', {'id': user.id}) }}">
+    {% else %}
+            <form method="post" action="{{ path('admin_gererPatient_create') }}">
+    {% endif %}
+
+
+        <label class="secondTitle" for="inputEmail">Email</label>
+        <input placeholder="{{ user.email | default('patient@patient.fr') }}" type="email" name="email" id="inputEmail" class="form-control mb-4 inputPlaceholderLight" {% if user is not defined %} required {% endif %} autofocus>
+
+        <label class="secondTitle" for="inputPassword">Mot de passe</label>
+        <input placeholder="Votre mot de passe ..." type="password" name="password" id="inputPassword" class="form-control inputPlaceholderLight" {% if user is not defined %} required {% endif %}>
+
+        <h3 class="mt-5 mb-3 secondTitle text-decoration-underline">Allergies du patient : </h3>
+        {% for allergen in allergens %}
+            <div class="ps-5 py-1 form-check">
+                {% if user is defined %}
+                    {% if allergen in user.allergens %}
+                        <input name="allergens[]" checked value="{{ allergen.id }}" class="form-check-input" type="checkbox" id="{{ allergen.name }}" />
+                    {% else %}
+                        <input name="allergens[]" value="{{ allergen.id }}" class="form-check-input" type="checkbox" id="{{ allergen.name }}" />
+                    {% endif %}
+                {% else %}
+                    <input name="allergens[]" value="{{ allergen.id }}" class="form-check-input" type="checkbox" id="{{ allergen.name }}" />
+                {% endif %}
+                <label for="{{ allergen.name }}" class="form-check-label text-secondary textNoto ps-2">{{ allergen.name }}</label>
+            </div>
+        {% endfor %}
+
+        <h3 class="mt-5 mb-3 secondTitle text-decoration-underline">Regime du patient : </h3>
+
+        {% for diet in diets %}
+            <div class="ps-5 py-1 form-check">
+                {% if user is defined %}
+                    {% if diet in user.diets %}
+                        <input name="diets[]" checked value="{{ diet.id }}" class="form-check-input" type="checkbox" id="{{ diet.name }}" />
+                    {% else %}
+                        <input name="diets[]" value="{{ diet.id }}" class="form-check-input" type="checkbox" id="{{ diet.name }}" />
+                    {% endif %}
+                {% else %}
+                    <input name="diets[]" value="{{ diet.id }}" class="form-check-input" type="checkbox" id="{{ diet.name }}" />
+                {% endif %}
+                <label for="{{ diet.name }}" class="form-check-label text-secondary textNoto ps-2">{{ diet.name }}</label>
+            </div>
+        {% endfor %}
+
+        <button class="btn btn-primary text-white w-100 mt-5 shadow1">{% if user is defined %}Modifier{% else %}Créer{% endif %}</button>
+    </form>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('admin_createPatient') }}
+{% endblock %}

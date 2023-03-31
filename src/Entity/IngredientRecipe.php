@@ -15,8 +15,8 @@ class IngredientRecipe
     #[Groups(['MODIFY_RECIPE'])]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(cascade: ['persist'])]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'ingredientRecipes')]
+    #[ORM\JoinColumn(nullable: false, )]
     #[Groups(['MODIFY_RECIPE'])]
     private ?Ingredient $ingredient = null;
 

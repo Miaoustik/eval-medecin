@@ -26,9 +26,15 @@ trait findAllPaginatedByTrait
 
         if ($criteria) {
             foreach ($criteria as $key => $crit) {
-                $queryBuilder = $queryBuilder
-                    ->andWhere("r.$key = :param")
-                    ->setParameter("param", $key);
+                if ($key === 'roles') {
+                    $queryBuilder = $queryBuilder->andWhere("r.roles LIKE :role")
+                        ->setParameter('role', "%" . $crit . "%");
+                } else {
+                    $queryBuilder = $queryBuilder
+                        ->andWhere("r.$key = :param")
+                        ->setParameter("param", $key);
+                }
+
             }
         }
 

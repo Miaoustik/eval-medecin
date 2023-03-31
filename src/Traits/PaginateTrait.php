@@ -4,11 +4,11 @@ namespace App\Traits;
 
 trait PaginateTrait
 {
-    private function paginate ($request, $repository, $paginationPath, $maxResultPerPage = 10, $order = null, $property = [])
+    private function paginate ($request, $repository, $paginationPath, $maxResultPerPage = 10, $order = null, $property = [], $criteria = [])
     {
         $maxResultPerPage = 10;
         $currentPage = $request->query->get('page') ?? 1;
-        $items = $repository->findAllPaginatedBy(maxResult: $maxResultPerPage, page: $currentPage, order: $order, property: $property);
+        $items = $repository->findAllPaginatedBy(maxResult: $maxResultPerPage, page: $currentPage, order: $order, property: $property, criteria: $criteria);
         $pageNumber = ceil(($repository->count([])) / $maxResultPerPage);
 
         return ([
