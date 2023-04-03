@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Allergen;
 use App\Traits\findAllPaginatedByTrait;
+use App\Traits\findByNamesTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,6 +20,7 @@ class AllergenRepository extends ServiceEntityRepository
 {
 
     use findAllPaginatedByTrait;
+    use findByNamesTrait;
 
     public function __construct(ManagerRegistry $registry)
     {

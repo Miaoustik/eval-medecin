@@ -4,6 +4,7 @@ namespace App\Controller\Admin\GererRecette;
 
 use App\Entity\Ingredient;
 use App\Entity\IngredientRecipe;
+use App\Entity\Recipe;
 use App\Repository\AllergenRepository;
 use App\Repository\DietRepository;
 use App\Repository\IngredientRepository;
@@ -18,7 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route(path: '/admin/modifier-recette')]
+#[Route(path: '/admin')]
 #[IsGranted('ROLE_ADMIN')]
 class ModifyRecipeController extends AbstractController
 {
@@ -26,7 +27,7 @@ class ModifyRecipeController extends AbstractController
     {
     }
 
-    #[Route(path: '/{id}', name: 'admin_modifyRecipe_index')]
+    #[Route(path: '/modifier-recette/{id}', name: 'admin_modifyRecipe_index')]
     public function index (int $id): Response
     {
         return $this->render('/admin/modifyRecipe/index.html.twig', [
@@ -34,7 +35,7 @@ class ModifyRecipeController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/api/getdata/{id}', methods: ['GET'])]
+    #[Route(path: '/modifier-recette/api/getdata/{id}', methods: ['GET'])]
     public function ApiGetData($id, RecipeRepository $recipeRepository, DietRepository $dietRepository, AllergenRepository $allergenRepository): Response
     {
         $diets = $dietRepository->findAll();
@@ -49,7 +50,7 @@ class ModifyRecipeController extends AbstractController
         ]), json: true);
     }
 
-    #[Route('/api/modify')]
+    #[Route('/modifier-recette/api/modify')]
     public function ApiModifyRecipe (
         Request $request,
         RecipeRepository $recipeRepository,
@@ -172,6 +173,26 @@ class ModifyRecipeController extends AbstractController
         }
 
         return new JsonResponse(status: 200);
+    }
+
+    #[Route(path: '/supprimer-recette/{id}', name: 'admin_modifyRecipe_delete', methods: ['POST'])]
+    public function delete (Recipe $recipe, Request $request, EntityManagerInterface $manager): Response
+    {
+        $token = $request->request->get('_token');
+
+        if (!$this->isCsrfTokenValid('delete', $token)) {
+            return new Response(status: 404);
+        }
+
+        try {
+            $manager->remove($recipe);
+            $manager->flush();
+            $this->addFlash('success', "La recette a bien été supprimée.");
+
+        } catch (\Exception $e) {
+            $this->addFlash('error', "Il y a eu un problème avec la suppression.");
+        }
+        return $this->redirectToRoute('admin_gererRecipe_index');
     }
 
 }

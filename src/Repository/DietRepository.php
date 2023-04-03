@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Diet;
 use App\Traits\findAllPaginatedByTrait;
+use App\Traits\findByNamesTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -18,7 +19,7 @@ use Doctrine\Persistence\ManagerRegistry;
 class DietRepository extends ServiceEntityRepository
 {
     use findAllPaginatedByTrait;
-
+    use findByNamesTrait;
 
     public function __construct(ManagerRegistry $registry)
     {

@@ -7,5 +7,12 @@ $pagination-color: #876C60;
 $pagination-border-color: #DC9A7D;
 $pagination-hover-bg: #DC9A7D30;
 $pagination-hover-border-color: #DC9A7D;
+$offcanvas-horizontal-width: 70%;
+$offcanvas-bg-color: #DC9A7D;
+$dropdown-bg: #876C60;
+$dropdown-link-hover-color: #000;
+$dropdown-link-color: white;
+$dropdown-link-hover-bg: #876C60;
 // the ~ allows you to reference things in node_modules
+@import "~bootstrap-icons/font/bootstrap-icons.css";
 @import "~bootstrap/scss/bootstrap";

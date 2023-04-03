@@ -193,6 +193,7 @@ export default function App ({recipeid = null}) {
                 fetch('/admin/creer-recette/api/getdata', fetchOption)
                     .then(res => res.json())
                     .then(dataArray => {
+                        console.log(dataArray[0])
                         allergensCheckbox.setInputs(prevState => {
                             return setCheckbox(prevState, dataArray[1])
                         })

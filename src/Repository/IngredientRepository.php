@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Ingredient;
 use App\Traits\findAllPaginatedByTrait;
+use App\Traits\findByNamesTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -18,6 +19,7 @@ use Doctrine\Persistence\ManagerRegistry;
 class IngredientRepository extends ServiceEntityRepository
 {
     use findAllPaginatedByTrait;
+    use findByNamesTrait;
 
     public function __construct(ManagerRegistry $registry)
     {
@@ -66,19 +68,4 @@ class IngredientRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
-    public function findAllByName(array $ingredients)
-    {
-        $qb = $this->createQueryBuilder('i');
-        $params = [];
-        foreach ( $ingredients as $k => $ingredient) {
-            $qb = $qb->orWhere("i.name = :name$k");
-            $params["name$k"] = $ingredient[0];
-        }
-
-        $qb->setParameters($params);
-
-        return $qb
-            ->getQuery()
-            ->getResult();
-    }
 }

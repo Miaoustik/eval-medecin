@@ -6,10 +6,10 @@
                 <p class="roundedSquare pt-3 textNoto">
                     {{ attribute( item, property) }}
                 </p>
-                <a href="{{ path('admin_' ~ pathController ~ '_modify', {'id': item.id}) }}" class="ms-auto btn btn-primary text-white">Modifier</a>
+                <a href="{{ path('admin_' ~ pathController ~ '_modify', {'id': item.id}) }}" class="ms-auto btn shadow1 btn-primary text-white"><i class="bi bi-pencil-fill"></i></a>
                 <form action="{{ path('admin_' ~ pathController ~ '_delete', {'id': item.id}) }}" method="post">
                     <input type="hidden" name="_token" value="{{ csrf_token('delete') }}" />
-                    <button class="ms-2 btn btn-secondary text-white" type="submit" >Supprimer</button>
+                    <button class="ms-2 btn btn-secondary text-white shadow1" type="submit" ><i class="bi bi-trash3-fill"></i></button>
                 </form>
             </div>
         </li>
