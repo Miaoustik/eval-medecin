@@ -14,7 +14,7 @@ export default function (initialValues = []) {
         setState(prevState => {
             const newState = [...prevState]
             newState.forEach((value, index) => {
-                if (value.id == e.target.id) {
+                if (value.id == e.target.getAttribute('data-id')) {
                     newState[index][e.target.name] = e.target.value
                 }
             })

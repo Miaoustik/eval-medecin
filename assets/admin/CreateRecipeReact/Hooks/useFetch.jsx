@@ -4,6 +4,8 @@ export default function (url, controllerRef = null) {
 
     const [data, setData] = useState(null)
     const [loading, setLoading] = useState(true)
+    const [refresh, setRefresh] = useState(false)
+
 
     useEffect(() => {
 
@@ -37,11 +39,12 @@ export default function (url, controllerRef = null) {
             controller.abort()
         }
 
-    }, [])
+    }, [refresh])
 
     return useMemo(() => ({
         data,
-        loading
+        loading,
+        setRefresh
     }), [
         data,
         loading

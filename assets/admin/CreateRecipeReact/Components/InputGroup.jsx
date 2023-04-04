@@ -8,10 +8,10 @@ export default function ({state, handleRemove, handleChange, withBtnRemove = tru
                     if (e !== 'id' && e !== 'error') {
                         if (withValidation && e === validationOn) {
                             return (
-                                <input required={required} onBlur={handleBlur} key={state.id + e} type={'text'} placeholder={e === 'quantity' ? placeholders[0] : placeholders[1]} onChange={handleChange} className={'form-control ' + (state.error !== '' ? (state.error === 'ok' ? 'is-valid' : 'is-invalid') : '')}   id={state.id} name={e} value={state[e]} />
+                                <input required={required} onBlur={handleBlur} key={state.id + e} type={'text'} placeholder={e === 'quantity' ? placeholders[0] : placeholders[1]} onChange={handleChange} className={'form-control ' + (state.error !== '' ? (state.error === 'ok' ? 'is-valid' : 'is-invalid') : '')}   data-id={state.id} name={e} value={state[e]} />
                             )
                         } else {
-                            return <input required={required} type={'text'} placeholder={e === 'quantity' ? placeholders[0] : placeholders[1]} onChange={handleChange} className={'form-control'} key={state.id + e} id={state.id} name={e} value={state[e]} />
+                            return <input required={required} type={'text'} placeholder={e === 'quantity' ? placeholders[0] : placeholders[1]} onChange={handleChange} className={'form-control'} key={state.id + e} data-id={state.id} name={e} value={state[e]} />
                         }
                     }
                 })}

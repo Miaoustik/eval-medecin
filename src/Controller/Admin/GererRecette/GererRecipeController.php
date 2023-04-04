@@ -41,6 +41,37 @@ class GererRecipeController extends AbstractController
         ]);
     }
 
+    #[Route(path: '/modifier-recette/{id}', name: 'admin_gererRecipe_modify')]
+    public function modify ($id)
+    {
+        return $this->render('/admin/gererRecipe/modify.html.twig', [
+            'recipeid' => $id
+        ]);
+    }
+
+    #[Route(path: '/modifier-recette/{id}/modify')]
+    public function modifyApiPost (
+        Request $request,
+        AllergenRepository $allergenRepository,
+        DietRepository $dietRepository,
+        IngredientRepository $ingredientRepository,
+        Recipe $recipe,
+        EntityManagerInterface $manager
+    ): Response
+    {
+        $postRecipe = json_decode($request->getContent());
+        $recipe = $this->setRecipe($postRecipe, $allergenRepository, $dietRepository, $ingredientRepository, $recipe, true);
+
+
+        try {
+            $manager->flush();
+        } catch (\Exception $e) {
+            return new JsonResponse($e->getMessage(), 404);
+        }
+
+        return new JsonResponse($recipe->getId());
+    }
+
     #[Route(path: '/modifier-recette/{id}/data')]
     public function modifyApiGet(Recipe $recipe, DietRepository $dietRepository, AllergenRepository $allergenRepository): Response
     {
@@ -89,16 +120,60 @@ class GererRecipeController extends AbstractController
     ): Response
     {
         $postRecipe = json_decode($request->getContent());
+        $recipe = $this->setRecipe($postRecipe, $allergenRepository, $dietRepository, $ingredientRepository, new Recipe());
 
-        $recipe = (new Recipe())
+        $manager->persist($recipe);
+
+        try {
+            $manager->flush();
+        } catch (\Exception $e) {
+            return new JsonResponse($e->getMessage(), 404);
+        }
+
+        return new JsonResponse($recipe->getId());
+    }
+
+    #[Route(path: '/supprimer-recette/{id}', name: 'admin_gererRecipe_delete', methods: ['POST'])]
+    public function delete (Recipe $recipe, Request $request, EntityManagerInterface $manager): Response
+    {
+        $token = $request->request->get('_token');
+
+        if (!$this->isCsrfTokenValid('delete', $token)) {
+            return new Response(status: 404);
+        }
+
+        try {
+            $manager->remove($recipe);
+            $manager->flush();
+            $this->addFlash('success', "La recette a bien été supprimée.");
+
+        } catch (\Exception $e) {
+            $this->addFlash('error', "Il y a eu un problème avec la suppression.");
+        }
+        return $this->redirectToRoute('admin_gererRecipe_index');
+    }
+
+    private function setRecipe($postRecipe,AllergenRepository $allergenRepository, DietRepository $dietRepository, IngredientRepository $ingredientRepository, Recipe $recipe, bool $modify = false): Recipe
+    {
+        $recipe
             ->setTitle($postRecipe->title)
             ->setDescription($postRecipe->description)
             ->setBreakTime($postRecipe->repos)
             ->setPreparationTime($postRecipe->preparation)
-            ->setCookingTime($postRecipe->cuisson);
+            ->setCookingTime($postRecipe->cuisson)
+            ->setPatientOnly($postRecipe->patientOnly);
 
         $allergens = $allergenRepository->findAllByNames($postRecipe->allergens);
         $diets = $dietRepository->findAllByNames($postRecipe->diets);
+
+        if ($modify) {
+            foreach ($recipe->getAllergens() as $allergen) {
+                $recipe->removeAllergen($allergen);
+            }
+            foreach ($recipe->getDiets() as $diet) {
+                $recipe->removeDiet($diet);
+            }
+        }
 
         foreach ($allergens as $allergen) {
             $recipe->addAllergen($allergen);
@@ -119,15 +194,24 @@ class GererRecipeController extends AbstractController
         }, $postIngredients);
         $ingredientsWithId = $ingredientRepository->findAllByNames($postIngredientsNames);
 
-        foreach ($postIngredients as $postIngredient) {
+        foreach ($postIngredients as $index => $postIngredient) {
             foreach ($ingredientsWithId as $ingredientWithId) {
                 if ($ingredientWithId->getName() === $postIngredient->name) {
                     $postIngredient->name = $ingredientWithId;
                 }
             }
+            $oldingredientRecipe = $recipe->getIngredientRecipes();
 
-            $ingredientRecipe = (new IngredientRecipe())
-                ->setQuantity($postIngredient->quantity);
+            if (isset($oldingredientRecipe[$index])) {
+                $ingredientRecipe = $oldingredientRecipe[$index];
+                $ingredientRecipe->setQuantity($postIngredient->quantity);
+            } else {
+                $ingredientRecipe = (new IngredientRecipe())
+                    ->setQuantity($postIngredient->quantity);
+            }
+
+
+
             if ($postIngredient->name instanceof Ingredient) {
                 $ingredientRecipe->setIngredient($postIngredient->name);
             } else {
@@ -135,19 +219,13 @@ class GererRecipeController extends AbstractController
                     ->setName($postIngredient->name);
                 $ingredientRecipe->setIngredient($newIngredient);
             }
-            $recipe->addIngredientRecipe($ingredientRecipe);
+
+            if (!$ingredientRecipe->getId()) {
+                $recipe->addIngredientRecipe($ingredientRecipe);
+            }
 
         }
-
-        $manager->persist($recipe);
-
-        try {
-            $manager->flush();
-        } catch (\Exception $e) {
-            return new JsonResponse($e->getMessage(), 404);
-        }
-
-        return new JsonResponse($recipe->getId());
+        return $recipe;
     }
 
 }

@@ -1,17 +1,56 @@
+{% set maxPagination = 2 %}
+
 {% if pageNumber > 1 %}
 <nav aria-label="Page navigation">
     <ul class=" mt-4 mb-2 pagination text-secondary justify-content-center">
-        {% if (currentPage != 1) %}
+        {% if (currentPage != 1) and maxPagination > 2 %}
             <li class="page-item"><a class="page-link" href="{{ path(paginationPath, {"page": currentPage - 1}) }}"><span aria-hidden="true">&laquo;</span></a></li>
         {% endif %}
-        {% for page in 1..pageNumber %}
-            {% if page == currentPage %}
-                <li class="page-item active"><a class="page-link" href="{{ path(paginationPath, {"page": page}) }}">{{ page }}</a></li>
-            {% else %}
+
+        {% if pageNumber - currentPage >= maxPagination + 1 %}
+            {% set offsetleft = 0 %}
+        {% else %}
+            {% set offsetleft = maxPagination - (pageNumber - currentPage) + 1 %}
+        {% endif %}
+
+        {% if currentPage >= maxPagination + 2 %}
+            {% set offsetright = 0 %}
+        {% else %}
+            {% set offsetright = maxPagination - currentPage + 2  %}
+        {% endif %}
+
+
+        {%  set pagin = currentPage - 1 %}
+        {%  set paginAdd = currentPage - maxPagination - offsetleft %}
+        {%  set pagin2 = currentPage + 1 %}
+        {%  set pagin2Add = currentPage + maxPagination + offsetright %}
+
+        {% if 1 < (currentPage - maxPagination) %}
+            <li class="page-item"><a class="page-link" href="{{ path(paginationPath, {"page": 1}) }}">{{ 1 }}</a></li>
+        {% endif %}
+
+
+        {% for page in paginAdd..pagin %}
+            {% if page > 0 %}
                 <li class="page-item "><a class="page-link" href="{{ path(paginationPath, {"page": page}) }}">{{ page }}</a></li>
             {% endif %}
         {% endfor %}
-        {% if (currentPage < pageNumber) %}
+
+
+        <li class="page-item active"><a class="page-link" href="{{ path(paginationPath, {"page": currentPage}) }}">{{ currentPage }}</a></li>
+
+
+        {% for page in pagin2..pagin2Add  %}
+            {% if page < pageNumber %}
+                <li class="page-item "><a class="page-link" href="{{ path(paginationPath, {"page": page}) }}">{{ page }}</a></li>
+            {% endif %}
+        {% endfor %}
+
+        {% if currentPage < pageNumber %}
+            <li class="page-item"><a class="page-link" href="{{ path(paginationPath, {"page": pageNumber}) }}">{{ pageNumber }}</a></li>
+        {% endif %}
+
+        {% if (currentPage < pageNumber) and maxPagination > 2 %}
             <li class="page-item"><a class="page-link" href="{{ path(paginationPath, {"page": currentPage + 1}) }}"><span aria-hidden="true">&raquo;</span></a></li>
         {% endif %}
     </ul>

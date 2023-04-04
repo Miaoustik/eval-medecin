@@ -1,640 +1,246 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
+import useInputTitle from "./Hooks/useInputTitle";
+import useFetch from "./Hooks/useFetch";
+import InputWithValidation from "./Components/InputWithValidation";
+import useInputDescription from "./Hooks/useInputDescription";
+import useCheckboxList from "./Hooks/useCheckboxList";
+import InputCheckboxList from "./Components/InputCheckboxList";
+import useInputsPreps from "./Hooks/useInputsPreps";
+import Input from "./Components/Input";
+import useInputGroup from "./Hooks/useInputGroup";
+import InputGroup from "./Components/InputGroup";
 import InputGroupList from "./Components/InputGroupList";
-import useInputGroupList from "./Hooks/useInputGroupList";
-import useInputCheckbox from "./Hooks/useInputCheckbox";
-import InputCheckbox from "./Components/InputCheckbox";
-import {capitalizeFirstLetter} from "./Utils/functions";
+import useInputGroupIngredient from "./Hooks/useInputGroupIngredient";
+import useInputListStages from "./Hooks/useInputListStages";
+import InputList from "./Components/InputList";
+import useHandleSubmitRecipe from "./Hooks/useHandleSubmitRecipe";
+import useFetchRecipe from "./Hooks/useFetchRecipe";
+import useCheckboxPatientOnly from "./Hooks/useCheckboxPatientOnly";
 
-export default function App ({recipeid = null}) {
+const ingredientsPlaceholder = [
+    '5 gr',
+    'Tomate'
+]
 
-
-
-    const dataRef = useRef({
-        diets: null,
-        allergens: null,
-        error: 0
-    })
+export default function ({recipeid = null}) {
 
     const controllerRef = useRef(null)
-
-    const [loading, setLoading] = useState(false)
-
-    const [titleInput, setTitleInput] = useState({
-        value: '',
-        error: ''
-    })
-    const [descriptionInput, setDescriptionInput] = useState({
-        value: '',
-        error: ''
-    })
-
-    const dietsCheckbox = useInputCheckbox([])
-
-    const allergensCheckbox = useInputCheckbox([])
-
-    const [createdId, setCreatedId] = useState(null);
-
-    const ingredientsInputGroup = useInputGroupList(['quantity', 'name'])
-    const stagesInputGroup = useInputGroupList(['stage'])
-    const allergensInputGroup = useInputGroupList(['name'], false, true)
-    const dietsInputGroup = useInputGroupList(['name'], false, true)
-
-    const [postLoading, setPostLoading] = useState(false)
-
-    const [trySubmitted, setTrySubmitted] = useState(false)
-    const [submitted, setSubmitted] = useState(false)
-
-    const [preps, setPreps] = useState({
-        'preparation': '',
-        'repos': '',
-        'cuisson': '',
-    })
-
-    function setCheckbox(prevState, values, checkedValues = null) {
-        const newState = []
-        values.forEach((v) => {
-            newState.push({
-                id: v.id,
-                name: v.name,
-                checked: false
-            })
-        })
-        if (checkedValues) {
-
-            if (checkedValues instanceof Array) {
-                checkedValues.forEach((v) => {
-                    newState.forEach((e) => {
-                        if (e.id == v.id) {
-                            e.checked = true // !!!
-                        }
-                    })
-                })
-            } else {
-                for (const v in checkedValues) {
-                    newState.forEach((e) => {
-                        if (e.id == v.id) {
-                            e.checked = true
-                        }
-                    })
-                }
-            }
-        }
-        return newState
-    }
-
-    function setRecipe(dataArray, setTitleInput, setDescriptionInput, setPreps, allergensCheckbox, dietsCheckbox, ingredientsInputGroup, stagesInputGroup, dataRef) {
-
-        const data = dataArray[0]
-        const diets = dataArray[1]
-        const allergens = dataArray[2]
-
-        dataRef.current = {
-            diets,
-            allergens,
-            error: 0
-        }
-
-        setTitleInput({
-            value: data.title,
-            error : ''
-        })
-        setDescriptionInput({
-            value: data.description,
-            error : ''
-        })
-        setPreps(prevState => {
-
-            const newState = {...prevState}
-
-            newState.preparation = data.preparationTime
-            newState.repos = data.breakTime
-            newState.cuisson = data.cookingTime
-
-            return newState
-        })
+    const errorRef = useRef(0)
 
 
+    const titleProps = useInputTitle(errorRef)
+    const descriptionProps = useInputDescription(errorRef)
 
-        allergensCheckbox.setInputs(prevState => {
-            return setCheckbox(prevState, allergens, data.allergens)
-        })
+    const {
+        data,
+        loading,
+        recipeId,
+        setRecipeId,
+        setRefresh
+    } = useFetchRecipe(recipeid, controllerRef)
 
-        dietsCheckbox.setInputs(prevState => {
-            return setCheckbox(prevState, diets, data.diets)
-        })
+    const allergensProps = useCheckboxList([])
+    const dietsProps = useCheckboxList([])
+    const prepsProps = useInputsPreps()
 
-        ingredientsInputGroup.setInputs(prevState => {
-            const newState = [...prevState]
-            data.ingredientRecipes.forEach((value, index) => {
-                if (index === 0) {
-                    newState[0].quantity = value.quantity
-                    newState[0].name = value.ingredient.name
-                    newState[0].realId = value.id
-                    newState[0].error = ''
-                } else {
-                    newState.push({
-                        id: newState[newState.length - 1].id + 1,
-                        quantity: value.quantity,
-                        name: value.ingredient.name,
-                        realId: value.id,
-                        error: ''
-                    })
-                }
-            })
-            return newState
-        })
+    const ingredientsProps = useInputGroupIngredient(errorRef)
+    const stageProps = useInputListStages(errorRef)
 
-        stagesInputGroup.setInputs(prevState => {
-            const newState = [...prevState]
-            data.stages.forEach((value, index) => {
-                if (index === 0) {
-                    newState[0].stage = value
-                } else {
-                    newState.push({
-                        id: newState[newState.length - 1].id + 1,
-                        stage: value
-                    })
-                }
-            })
-            return newState
-        })
-    }
+    const patientOnlyProps = useCheckboxPatientOnly()
 
-    //TODO FINIR VALIDATION ETAPE INGREDIENTS
+    const {
+        handleTryNo,
+        submitted,
+        handleTrySubmit,
+        postLoading,
+        trySubmitted,
+        handleTryYes,
+        handleResetForm
+    } = useHandleSubmitRecipe(
+        patientOnlyProps,
+        titleProps,
+        descriptionProps,
+        allergensProps,
+        dietsProps,
+        prepsProps,
+        ingredientsProps,
+        stageProps,
+        controllerRef,
+        errorRef,
+        recipeId,
+        setRefresh,
+        recipeid,
+        setRecipeId
+    )
 
     useEffect(() => {
+        if (data) {
 
-            controllerRef.current = new AbortController()
+            const allergens = data[1]
+            const diets = data[0]
 
-            setLoading(true)
-
-            if (recipeid) {
-                const fetchRecipeOption = {
-                    signal: controllerRef.current.signal,
-                    headers: {
-                        Accept: 'application/json'
-                    }
-                }
-
-                fetch('/admin/modifier-recette/api/getdata/' + recipeid, fetchRecipeOption)
-                    .then(res => res.json())
-                    .then(dataArray => {
-                        setRecipe(dataArray, setTitleInput, setDescriptionInput, setPreps, allergensCheckbox, dietsCheckbox, ingredientsInputGroup, stagesInputGroup, dataRef)
-                        console.log(dataArray[0], 'entry')
-                    })
-                    .finally(() => setLoading(false))
-            } else {
-                const fetchOption = {
-                    signal: controllerRef.current.signal,
-                    headers: {
-                        Accept: 'application/json'
-                    }
-                }
-                fetch('/admin/creer-recette/api/getdata', fetchOption)
-                    .then(res => res.json())
-                    .then(dataArray => {
-                        console.log(dataArray[0])
-                        allergensCheckbox.setInputs(prevState => {
-                            return setCheckbox(prevState, dataArray[1])
-                        })
-
-                        dietsCheckbox.setInputs(prevState => {
-                            return setCheckbox(prevState, dataArray[0])
-                        })
-
-                    })
-                    .catch(e => console.log(e))
-                    .finally(() => setLoading(false))
-            }
-
-
-            return () => {
-                controllerRef.current.abort();
-            }
-
-    }, [])
-
-    const handleTitleInput = useCallback((e) => {
-        setTitleInput(prevState => {
-            const newState = {...prevState}
-            newState.value = e.target.value
-            return newState
-        })
-    }, [])
-
-
-    function inputSetError (setter, notValidBool, dataRef, message = 'ok', index = null) {
-
-        if (index) {
-            setter(prevState => {
-                const newState = [...prevState]
-                if (notValidBool) {
-                    if (newState[index].error !== 'Not') {
-                        dataRef.current.error++
-                    }
-                    newState[index].error = 'Not'
-                } else {
-                    if (newState[index].error === 'Not') {
-                        newState[index].error = message
-                        dataRef.current.error--
-                    }
-                }
-                return newState
-            })
-        } else {
-            setter(prevState => {
+            allergensProps.setState(prevState => {
                 const newState = {...prevState}
-                if (notValidBool) {
-                    if (newState.error !== 'Not') {
-                        dataRef.current.error++
-                    }
-                    newState.error = 'Not'
-                } else {
-                    if (newState.error === 'Not') {
-                        newState.error = message
-                        dataRef.current.error--
-                    }
-                }
+                allergens.forEach((allergen) => {
+                    newState[allergen.name] = false
+                })
                 return newState
             })
-        }
-    }
 
-    const handleBlurTitle = useCallback(() => {
-
-        inputSetError(setTitleInput, titleInput.value.length < 3, dataRef)
-
-    }, [titleInput])
-
-    const handleBlurDescription = useCallback(() => {
-        inputSetError(setDescriptionInput, descriptionInput.value.length < 5, dataRef)
-    }, [descriptionInput])
-
-    const handleDescriptionInput = useCallback((e) => {
-        setDescriptionInput(prevState => {
-            const newState = {...prevState}
-            newState.value = e.target.value
-            return newState
-        })
-    }, [])
-
-
-    const handleChange = useCallback((e) => {
-        const name = e.target.getAttribute('id')
-        const value = e.target.value
-        setPreps(prevState => {
-            const newState = {...prevState}
-            newState[name] = value
-            return newState
-        })
-    }, [])
-
-    const handleResetForm = useCallback((e) => {
-        e.preventDefault()
-        window.scrollTo(0, 0)
-        setTrySubmitted(false)
-        setSubmitted(false)
-        setTitleInput('')
-        setDescriptionInput('')
-
-        allergensCheckbox.setInputs(prevState => {
-            const newState = [...prevState]
-            newState.forEach(e => e.checked = false)
-            return newState
-        })
-
-        allergensInputGroup.setInputs(prevState => {
-            const newState = [...prevState][0]
-            newState.id = 1
-            newState.error = ''
-            allergensInputGroup.inputNames.forEach(e => {
-                newState[e] = ''
-            })
-            return [newState]
-        })
-
-        dietsCheckbox.setInputs(prevState => {
-            const newState = [...prevState]
-            newState.forEach(e => e.checked = false)
-            return newState
-        })
-
-        dietsInputGroup.setInputs(prevState => {
-            const newState = [...prevState][0]
-            newState.id = 1
-            newState.error = ''
-            dietsInputGroup.inputNames.forEach(e => {
-                newState[e] = ''
-            })
-            return [newState]
-        })
-
-        setPreps(prevState => {
-            const newState = {...prevState}
-            newState.cuisson = ''
-            newState.preparation = ''
-            newState.repos = ''
-            return newState
-        })
-        ingredientsInputGroup.setInputs(prevState => {
-            const newState = [...prevState][0]
-            newState.id = 1
-            newState.error = ''
-            return [newState]
-        })
-        stagesInputGroup.setInputs(prevState => {
-            const newState = [...prevState][0]
-            newState.id = 1
-            newState.error = ''
-            return [newState]
-        })
-
-        const fetchOption = {
-            headers: {
-                Accept: 'application/json',
-            }
-        }
-
-        fetch('/admin/creer-recette/api/getdata', fetchOption)
-            .then(res => res.json())
-            .then(dataArray => {
-                allergensCheckbox.setInputs(prevState => {
-                    return setCheckbox(prevState, dataArray[1])
+            dietsProps.setState(prevState => {
+                const newState = {...prevState}
+                diets.forEach(diet => {
+                    newState[diet.name] = false
                 })
-
-                dietsCheckbox.setInputs(prevState => {
-                    return setCheckbox(prevState, dataArray[0])
-                })
-            })
-            .catch(e => console.log(e))
-    }, [])
-
-    const handleTrySubmit = useCallback((e) => {
-        e.preventDefault()
-        setTrySubmitted(true)
-        setSubmitted(false)
-    }, [])
-
-    const handleTryNo = useCallback(() => {
-        setTrySubmitted(false)
-    }, [])
-
-    function checkDuplicate ( inputs, checkInputs) {
-
-        function setErrorFunc (error, inputs, k){
-            if (error === '') {
-                inputs.setInputs(prevState => {
-                    const newState = [...prevState]
-
-                    if (newState[k].name !== '') {
-                        if (newState[k].error === "L'entité éxistes déjà.") {
-                            dataRef.current.error--
-                        }
-                        newState[k].error = 'ok'
-                    } else {
-                        if (newState[k].error !== '') {
-                            dataRef.current.error--
-                        }
-                        newState[k].error = ''
-                    }
-
-                    return newState
-                })
-            }
-        }
-
-        function setSecondError (input, k) {
-            const error = "L'entité éxistes déjà."
-
-            if (input.error !== error) {
-                dataRef.current.error++
-                inputs.setInputs(prevState => {
-                    const newState = [...prevState]
-                    newState[k].error = error
-                    return newState
-                })
-            }
-            return error
-        }
-
-
-        inputs.inputs.forEach((i, k) => {
-
-            let error = ''
-
-            checkInputs.inputs.forEach(c => {
-                if (i.name.toLowerCase() === c.name.toLowerCase()) {
-                    error = setSecondError(i, k)
-                }
+                return newState
             })
 
-            inputs.inputs.forEach((c, index) => {
-                if (i.name.toLowerCase() === c.name.toLowerCase() && k !== index) {
-                    error = setSecondError(i, k)
-                }
-            })
-
-            return setErrorFunc(error, inputs, k)
-        })
-    }
-
-    const handleBlurDiet = useCallback(() => {
-
-        checkDuplicate(dietsInputGroup, dietsCheckbox, dataRef)
-    }, [dietsInputGroup, dietsCheckbox, checkDuplicate, inputSetError, dataRef])
-
-    const handleBlurAllergen = useCallback(() => {
-        checkDuplicate(allergensInputGroup, allergensCheckbox, dataRef)
-    }, [allergensInputGroup, allergensCheckbox, checkDuplicate, inputSetError, dataRef])
-
-    const handleTryYes = useCallback((e) => {
-        e.preventDefault()
-        setPostLoading(true)
-        setSubmitted(false)
-
-        const recipe = {
-            'title' : titleInput.value,
-            'description' : descriptionInput.value,
-            'preparationTime' : preps.preparation === '' ? 0 : parseInt(preps.preparation, 10),
-            'breakTime' : preps.repos === '' ? 0 : parseInt(preps.repos, 10),
-            'cookingTime' : preps.cuisson === '' ? 0 : parseInt(preps.cuisson, 10),
-            "ingredientRecipes" : ingredientsInputGroup.inputs.map(e => {
-
-                const value = {
-                    quantity: e.quantity,
-                    ingredient: {
-                        name: e.name
-                    }
-                }
-
-                if (e.realId) {
-                    value['id'] = e.realId
-                    value.recipe = recipeid
-                }
-
-                return value
-
-            }),
-            "stages" : stagesInputGroup.inputs.map(e => e.stage),
-            'allergens' : [],
-            'diets' : []
-        }
-
-        if (recipeid) {
-            recipe['id'] = recipeid
-        }
-
-        allergensCheckbox.inputs.forEach(input => {
-
-            if (input.checked === true) {
-                recipe.allergens.push(input.id)
-            }
-        })
-
-        allergensInputGroup.inputs.forEach(input => {
-            if (input.name !== '') {
-                const value = input.name.trim()
-                recipe.allergens.push({
-                    'name': capitalizeFirstLetter(value)
-                })
-            }
-        })
-
-        dietsCheckbox.inputs.forEach(input => {
-            if (input.checked === true) {
-                recipe.diets.push(input.id)
-            }
-        })
-
-        dietsInputGroup.inputs.forEach(input => {
-            if (input.name !== '') {
-                const value = input.name.trim()
-                recipe.diets.push({
-                    'name': capitalizeFirstLetter(value)
-                })
-            }
-        })
-
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(recipe),
-            signal: controllerRef.current.signal
-        };
-
-        console.log(recipe, 'sortie')
-
-        if (dataRef.current.error === 0) {
             if (recipeid) {
-                fetch('/admin/modifier-recette/api/modify', requestOptions)
-                    .then(() => {
-                        const fetchRecipeOption = {
-                            signal: controllerRef.current.signal,
-                            headers: {
-                                Accept: 'application/json'
+                const recipe = data[2]
+
+                titleProps.setState(prevState => {
+                    const newState = {...prevState}
+                    newState.value = recipe.title
+                    return newState
+                })
+
+                descriptionProps.setState(prevState => {
+                    const newState = {...prevState}
+                    newState.value = recipe.description
+                    return newState
+                })
+
+                allergensProps.setState(prevState => {
+                    const newState = {...prevState}
+                    Object.keys(newState).forEach(s => {
+                        recipe.allergens.forEach(a => {
+                            if (a.name === s) {
+                                newState[s] = true
                             }
+                        })
+                    })
+                    return newState
+                })
+
+                dietsProps.setState(prevState => {
+                    const newState = {...prevState}
+                    Object.keys(newState).forEach(s => {
+                        recipe.diets.forEach(d => {
+                            if (d.name === s) {
+                                newState[s] = true
+                            }
+                        })
+                    })
+                    return newState
+                })
+
+                prepsProps.setState(prevState => {
+                    const newState = {...prevState}
+
+                    newState.preparation = recipe.preparationTime
+                    newState.cuisson = recipe.cookingTime
+                    newState.repos = recipe.breakTime
+
+                    return newState
+                })
+
+                ingredientsProps.setState(prevState => {
+                    const newState = [...prevState]
+                    recipe.ingredientRecipes.forEach((r, i) => {
+                        if (i === 0) {
+                            newState[0].quantity = r.quantity
+                            newState[0].name = r.ingredient.name
+                        } else {
+                            newState.push({
+                                id: i + 1,
+                                quantity: r.quantity,
+                                name: r.ingredient.name,
+                                error: ''
+                            })
                         }
 
-                        fetch('/admin/modifier-recette/api/getdata/' + recipeid , fetchRecipeOption)
-                            .then(res => res.json())
-                            .then(dataArray => {
-                                setRecipe(dataArray, setTitleInput, setDescriptionInput, setPreps, allergensCheckbox, dietsCheckbox, ingredientsInputGroup, stagesInputGroup, dataRef)
-                                setSubmitted(true)
-                                setPostLoading(false)
+                    })
+                    return newState
+                })
+
+                stageProps.setState(prevState => {
+                    const newState = prevState
+                    recipe.stages.forEach((s, i) => {
+                        if (i === 0) {
+                            newState[0].value = s
+                        } else {
+                            newState.push({
+                                id: i + 1,
+                                value: s,
+                                error: '',
+                                nameId: 'stage'
                             })
+                        }
                     })
-                    .catch(e => console.log(e))
-            } else {
-
-                fetch('/admin/creer-recette/api/create', requestOptions)
-                    .then(res => res.json())
-                    .then ((data) => {
-                        setCreatedId(data)
-                        setSubmitted(true)
-                        setPostLoading(false)
-                    })
-                    .catch(e => console.log(e))
+                    return newState
+                })
+                patientOnlyProps.setState(recipe.patientOnly)
             }
-
-
-
-        } else {
-            console.log('hello', dataRef.current.error)
-            setPostLoading(false)
-            setTrySubmitted(false);
         }
+    }, [data])
 
-
-    }, [
-        titleInput,
-        descriptionInput,
-        preps,
-        ingredientsInputGroup.inputs,
-        stagesInputGroup.inputs,
-        allergensCheckbox.inputs,
-        dietsCheckbox.inputs,
-        setTitleInput, setDescriptionInput, setPreps, allergensCheckbox, dietsCheckbox, ingredientsInputGroup, stagesInputGroup, dataRef
-    ])
-
-    function parseIntPreps(value) {
-        return parseInt(value === '' ? 0 : value, 10)
-    }
-
-    //TODO patient Only
 
 
     if (loading) {
-        return <p>Chargement...</p>
+        return (
+            <div className="spinner-border" role="status">
+                <span className="visually-hidden">Loading...</span>
+            </div>
+        )
     }
-
 
     return (
         <>
             <h2 className="secondTitle text-decoration-underline">{recipeid ? 'Modifier' : 'Créer'} une recette</h2>
-            <form>
-                <label className="form-label text-secondary mt-4" htmlFor="title">Titre de la recette : </label>
-                <input onBlur={handleBlurTitle} onChange={handleTitleInput} value={titleInput.value} type="text" id="title" className={"form-control " + (titleInput.error !== '' ? (titleInput.error === 'ok' ? 'is-valid' : 'is-invalid') : '')}  />
-                {titleInput.error !== '' && titleInput.error !== 'ok' &&
-                    <div id={'title'} className={'invalid-feedback'}>3 lettres minimum.</div>
-                }
 
-                <label className="form-label text-secondary mt-4" htmlFor="message">Description de la recette : </label>
-                <textarea onBlur={handleBlurDescription} onChange={handleDescriptionInput} value={descriptionInput.value} id="message" className={"form-control " +(descriptionInput.error !== '' ? (descriptionInput.error === 'ok' ? 'is-valid' : 'is-invalid') : '')} rows="5"></textarea>
-                {descriptionInput.error !== '' && descriptionInput.error !== 'ok' &&
-                    <div id={'message'} className={'invalid-feedback'}>5 lettres minimum.</div>
-                }
+            <form onSubmit={handleTryYes}>
 
+
+                <InputWithValidation required={true} {...titleProps} label={'Titre de la recette : '} />
+                <InputWithValidation required={true} {...descriptionProps} type={'textarea'} label={'Description de la recette : '} />
 
                 <h3 className="mt-5 mb-3 secondTitle text-decoration-underline">Allergies de la recette : </h3>
+                <InputCheckboxList {...allergensProps} />
 
-                <InputCheckbox {...allergensCheckbox} />
-                <InputGroupList  {...allergensInputGroup} handleBlur={handleBlurAllergen} btnAddText={'Créer et ajouter une allergie'} />
-
-                <h3 className="mt-5 mb-3 secondTitle text-decoration-underline">Regimes de la recette : </h3>
-
-                <InputCheckbox {...dietsCheckbox}  />
-                <InputGroupList {...dietsInputGroup} handleBlur={handleBlurDiet} btnAddText={'Créer et ajouter un régime'} />
+                <h3 className="mt-5 mb-3 secondTitle text-decoration-underline">Régimes de la recette : </h3>
+                <InputCheckboxList {...dietsProps} />
 
                 <h3 className="mt-5 mb-3 secondTitle text-decoration-underline">Temps de la recette : </h3>
 
-                <p className={'text-secondary text-decoration-underline'}>Temps total : {(parseIntPreps(preps.preparation) + parseIntPreps(preps.repos) + parseIntPreps(preps.cuisson))} minutes</p>
+                <p className={'text-secondary text-decoration-underline'}>Temps total : {(parseInt(prepsProps.state.preparation === '' ? 0 : prepsProps.state.preparation, 10) + parseInt(prepsProps.state.repos === '' ? 0 : prepsProps.state.repos, 10) + parseInt(prepsProps.state.cuisson === '' ? 0 : prepsProps.state.cuisson, 10))} minutes</p>
 
-                <label className="form-label mt-4 text-secondary" htmlFor="preparation">Temps de préparation : </label>
-                <input min={0} onChange={handleChange} type="number" id="preparation" className="form-control" value={preps["preparation"]}/>
+                {Object.keys(prepsProps.state).map(e => {
+                    let label = ''
 
-                <label className="form-label text-secondary mt-3" htmlFor="repos">Temps de repos : </label>
-                <input min={0} onChange={handleChange} type="number" id="repos" className="form-control" value={preps["repos"]}/>
+                    if (e === 'preparation') {
+                        label = "Temps de préparation : "
+                    } else if (e === 'repos') {
+                        label = "Temps de repos : "
+                    } else {
+                        label = "Temps de cuisson : "
+                    }
 
-                <label className="form-label text-secondary mt-3" htmlFor="cuisson">Temps de cuisson : </label>
-                <input min={0} onChange={handleChange} type="number" id="cuisson" className="form-control" value={preps["cuisson"]}/>
+                    return <Input key={e} value={prepsProps.state[e]} name={e} label={label} type={'number'} handleChange={prepsProps.handleChange}/>
+                })}
 
                 <h3 className="mt-5 mb-3 secondTitle text-decoration-underline">Ingrédients : </h3>
 
-                <InputGroupList {...ingredientsInputGroup} placeholders={['5 grammes', 'Cannelle']} />
+                <InputGroupList required={true} validationOn={ingredientsProps.validationOn} handleBlur={ingredientsProps.handleBlur} state={ingredientsProps.state} handleRemove={ingredientsProps.handleRemove} ingredientsPlaceholder={ingredientsPlaceholder} addBtnText={'Ajouter un ingrédient'} handleChange={ingredientsProps.handleChange} handleAdd={ingredientsProps.handleAdd}/>
 
-                <h3 className="mt-5 mb-3 secondTitle text-decoration-underline">Etapes : </h3>
+                <h3 className="mt-5 mb-4 secondTitle text-decoration-underline">Etapes : </h3>
 
-                <InputGroupList {...stagesInputGroup} btnAddText={'Ajouter une étape'} type={'textarea'} />
+                <InputList required={true} {...stageProps} rows={3} addBtnText={'Ajouter une étape'} />
+
+                <h3 className="mt-5 mb-4 secondTitle text-decoration-underline">Visibilité : </h3>
+                <div className="ps-5 py-1 form-check">
+                    <input type={'checkbox'} checked={patientOnlyProps.state} className="form-check-input" onChange={patientOnlyProps.handleChange} id={'patient'} />
+                    <label htmlFor={'patient'} className="form-check-label text-secondary textNoto ps-2">Visible uniquement par les patients</label>
+                </div>
 
                 {trySubmitted ? (
                     <>
@@ -646,9 +252,9 @@ export default function App ({recipeid = null}) {
                                     <p className={'p-0 m-0 textNoto'}>Votre recette a bien été {!recipeid ? 'crée' : 'modifiée'}.</p>
                                 </div>
 
-                                {createdId
-                                    ? <a href={'/admin/modifier-recette/' + createdId} className={'btn btn-primary text-white w-100 my-3 shadow1'}>Modifier la recette</a>
-                                    : <button onClick={handleTrySubmit} className={'btn btn-primary text-white w-100 my-3 shadow1'}>Modifier la recette</button>
+                                {recipeid
+                                    ? <button onClick={handleTryYes} className={'btn btn-primary text-white w-100 my-3 shadow1'}>Modifier la recette</button>
+                                    : <a href={'/admin/modifier-recette/' + recipeId} className={'btn btn-primary text-white w-100 my-3 shadow1'}>Modifier la recette</a>
                                 }
 
                                 <p className={'textNoto'}>Voulez-vous créer une nouvelle recette ?</p>
@@ -670,7 +276,7 @@ export default function App ({recipeid = null}) {
                                     <>
                                         <p className={'textNoto mt-3'}>La recette va être {recipeid ? 'modifiée' : 'crée'}. Etes-vous sur? </p>
                                         <div className={'d-inline-flex w-100'}>
-                                            <button type={'submit'} onClick={handleTryYes} className={'btn btn-primary text-white me-3 w-100 shadow1'}>Oui</button>
+                                            <button type={'submit'} className={'btn btn-primary text-white me-3 w-100 shadow1'}>Oui</button>
                                             <button onClick={handleTryNo} className={'btn btn-secondary w-100 shadow1'}>Non</button>
                                         </div>
                                     </>

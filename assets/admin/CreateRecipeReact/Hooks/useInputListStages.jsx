@@ -46,6 +46,7 @@ export default function (errorRef) {
         handleChange,
         state,
         handleBlur,
-        handleAdd
+        handleAdd,
+        setState
     }
 }

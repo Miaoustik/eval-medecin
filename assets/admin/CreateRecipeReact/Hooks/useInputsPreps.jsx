@@ -18,7 +18,8 @@ export default function () {
 
     return useMemo(() => ({
         state,
-        handleChange
+        handleChange,
+        setState
     }), [
         state,
         handleChange

@@ -2,6 +2,7 @@ import {useCallback, useMemo, useState} from "react";
 import {capitalizeFirstLetter} from "../Utils/functions";
 
 export default function (
+    patientOnlyProps,
     titleProps,
     descriptionProps,
     allergensProps,
@@ -11,15 +12,15 @@ export default function (
     stageProps,
     controllerRef,
     errorRef,
+    recipeId,
+    setRefresh,
     recipeid = null,
     setRecipeId = null,
-    recipeId
 ) {
 
     const [postLoading, setPostLoading] = useState(false)
     const [trySubmitted, setTrySubmitted] = useState(false)
     const [submitted, setSubmitted] = useState(false)
-    const [createdId, setCreatedId] = useState(null);
 
     const handleTrySubmit = useCallback((e) => {
         e.preventDefault()
@@ -32,12 +33,41 @@ export default function (
     }, [])
 
     const handleResetForm = useCallback(() => {
+        setRefresh(prevState => !prevState)
+        titleProps.setState({
+            value: '',
+            error: ''
+        })
+        descriptionProps.setState({
+            value: '',
+            error: ''
+        })
 
+        prepsProps.setState({
+            "preparation": "",
+            "cuisson": "",
+            "repos": ""
+        })
+
+        ingredientsProps.setState({
+            id: 1,
+            quantity: '',
+            name: '',
+            error: ''
+        })
+
+        stageProps.setState({
+            id: 1,
+            value: '',
+            error: '',
+            nameId: 'stage'
+        })
     }, [])
 
 
     const handleTryYes = useCallback((e) => {
         e.preventDefault()
+
         setSubmitted(false)
         if (errorRef.current === 0) {
             setPostLoading(true)
@@ -59,6 +89,7 @@ export default function (
                 repos: prepsProps.state.repos === '' ? 0 : parseInt(prepsProps.state.repos, 10),
                 cuisson: prepsProps.state.cuisson === '' ? 0 : parseInt(prepsProps.state.cuisson, 10),
                 preparation: prepsProps.state.preparation === '' ? 0 : parseInt(prepsProps.state.preparation, 10),
+                patientOnly: patientOnlyProps.state,
                 ingredients: ingredientsProps.state.map(e => {
                     return {
                         quantity: e.quantity,
@@ -84,13 +115,15 @@ export default function (
             }
 
             console.log(recipeObj)
+            const url = recipeid ? '/admin/modifier-recette/' + recipeid + '/modify' : '/admin/creer-recette/create'
 
-            fetch('/admin/creer-recette/create', fetchOptions)
+            fetch(url, fetchOptions)
                 .then(response => response.json())
                 .then(data => setRecipeId(data))
                 .finally(() => {
                     setSubmitted(true)
                     setPostLoading(false)
+
                 })
         } else {
             setTrySubmitted(false)
@@ -113,7 +146,6 @@ export default function (
         submitted,
         handleTrySubmit,
         handleTryNo,
-        createdId,
         handleResetForm
     }), [
         handleTryYes,
@@ -122,7 +154,6 @@ export default function (
         submitted,
         handleTrySubmit,
         handleTryNo,
-        createdId,
         handleResetForm
     ])
 }

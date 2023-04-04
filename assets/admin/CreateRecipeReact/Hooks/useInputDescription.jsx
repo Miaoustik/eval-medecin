@@ -18,7 +18,8 @@ export default function (errorRef) {
         value: state.value,
         error: state.error,
         handleChange,
-        handleBlur
+        handleBlur,
+        setState
     }), [
         state.value,
         state.error,

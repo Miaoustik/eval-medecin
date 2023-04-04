@@ -16,9 +16,9 @@
                             {{ recipe.title }}
                         </a>
                     </p>
-                    <a href="{{ path('admin_modifyRecipe_index', {'id': recipe.id}) }}" class="shadow1 ms-auto btn btn-primary text-white"><i class="bi bi-pencil-fill"></i></a>
+                    <a href="{{ path('admin_gererRecipe_modify', {'id': recipe.id}) }}" class="shadow1 ms-auto btn btn-primary text-white"><i class="bi bi-pencil-fill"></i></a>
 
-                    <form action="{{ path('admin_modifyRecipe_delete', {'id': recipe.id}) }}" method="post">
+                    <form action="{{ path('admin_gererRecipe_delete', {'id': recipe.id}) }}" method="post">
                         <input type="hidden" name="_token" value="{{ csrf_token('delete') }}" />
                         <button class="ms-2 btn btn-secondary text-white shadow1" type="submit" ><i class="bi bi-trash3-fill"></i></button>
                     </form>

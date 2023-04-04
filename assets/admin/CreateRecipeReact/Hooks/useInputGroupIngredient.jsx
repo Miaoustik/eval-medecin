@@ -15,8 +15,6 @@ export default function (errorRef) {
             const message = "L'ingrédient éxiste déjà."
             const newState = [...prevState]
 
-            //TODO FIX HERE
-
             newState.forEach((new1, index1) => {
                 newState.forEach((new2, index2) => {
                     if (index1 !== index2) {
@@ -35,21 +33,6 @@ export default function (errorRef) {
                 })
             })
 
-            /*newState.forEach((el, index) => {
-                if (el.name.trim().toLowerCase() === e.target.value.trim().toLowerCase()) {
-                    console.log('yes')
-                    if (newState[index].error !== message) {
-                        errorRef.current++
-                        newState[index].error = message
-                    }
-                } else {
-                    console.log('no')
-                    if (newState[index].error === message) {
-                        errorRef.current--
-                        newState[index].error = 'ok'
-                    }
-                }
-            })*/
             return newState
         })
     }, [])
@@ -60,6 +43,7 @@ export default function (errorRef) {
         handleAdd,
         handleRemove,
         handleBlur,
-        validationOn: 'name'
+        validationOn: 'name',
+        setState
     }
 }
