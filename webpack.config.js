@@ -29,8 +29,6 @@ Encore
     .addEntry('admin_createPatient', './assets/admin/createPatient.js')
     .addEntry('admin_createRecipe', './assets/admin/createRecipe.js')
     .addEntry('admin_createRecipeReact', './assets/admin/CreateRecipeReact/index.js')
-    .addEntry('admin_modifyRecipeReact', './assets/admin/ModifyRecipeReact/index.js')
-    .addEntry('admin_modifyRecipe', './assets/admin/createRecipe.js')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     //.enableStimulusBridge('./assets/controllers.json')

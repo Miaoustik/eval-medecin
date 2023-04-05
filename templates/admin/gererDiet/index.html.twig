@@ -8,7 +8,7 @@
     {% include '_flashes.html.twig' %}
 
     {% include '/admin/_gererIndexBase.html.twig' with { 'items': items, 'property': 'name', 'pathController': 'gererDiet', 'btnText': 'Créer un régime' } %}
-    {% include '_pagination.html.twig' with {currentPage, pageNumber, paginationPath} %}
+    {% include '_pagination.html.twig' %}
 {% endblock %}
 
 {% block stylesheets %}

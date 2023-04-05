@@ -19,7 +19,11 @@ class GererIngredientController extends AbstractController
     #[Route(path: '/gerer-les-ingredients', name: 'admin_gererIngredient_index')]
     public function index (IngredientRepository $repository, Request $request): Response
     {
-        $pagination = $this->paginate($request, $repository, 'admin_gererIngredient_index', 10, 'name');
+        $pagination = $this->paginate(
+            request: $request,
+            repository: $repository,
+            property: ['id', 'name']
+        );
 
         return $this->render('/admin/gererIngredient/index.html.twig', [
             ...$pagination

@@ -1,10 +1,14 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="shadow1 form-control  d-flex justify-content-between">
-        <span class=" text-primary  searchBar rounded">Je recherche ...</span>
-        <div class="ms-10 p-0 px-2 rounded-pill btn btn-primary "><img class="pb-1" src="{{ asset('images/Loupe.png') }}" alt="Launch Search"/></div>
-    </div>
+    <form method="get" action="{{ path('recipes_index') }}" role="search">
+        <label for="searchHome" class="textNoto text-black mb-3">Rechercher une recette par nom :  </label>
+        <div class="input-group">
+            <input name="q" required placeholder="Soupe de tomate ..." id="searchHome" type="text" class="form-control shadow1" />
+            <button class="shadow1 btn btn-primary text-white"><i class="bi bi-search"></i></button>
+        </div>
+
+    </form>
     <section class="mb-5">
         <h2 class="text-secondary secondTitle mt-5">Mes services</h2>
         <p class="textNoto">

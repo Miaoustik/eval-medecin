@@ -34,7 +34,11 @@ class GererRecipeController extends AbstractController
     public function index (RecipeRepository $repository, Request $request): Response
     {
 
-       $pagination = $this->paginate($request, $repository, 'admin_gererRecipe_index', null, null, ['title', 'id']);
+       $pagination = $this->paginate(
+           request: $request,
+           repository: $repository,
+           property: ['title', 'id']
+       );
 
         return $this->render('/admin/gererRecipe/index.html.twig', [
             ...$pagination

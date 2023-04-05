@@ -28,7 +28,12 @@ class GererPatientController extends AbstractController
     #[Route(path: '/gerer-les-patients', name: 'admin_gererPatient_index')]
     public function index (UserRepository $repository, Request $request): Response
     {
-        $pagination = $this->paginate($request, $repository, 'admin_gererPatient_index', 10, 'email', criteria: ["roles" => 'ROLE_USER']);
+        $pagination = $this->paginate(
+            request: $request,
+            repository: $repository,
+            property: ['id', 'email'],
+            criteria: ["roles" => 'ROLE_USER']
+        );
 
         return $this->render('/admin/gererPatient/index.html.twig', [
             ...$pagination

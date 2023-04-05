@@ -22,8 +22,11 @@ class GererDietController extends AbstractController
     #[Route(path: '/gerer-les-regimes', name: 'admin_gererDiet_index')]
     public function index (DietRepository $repository, Request $request): Response
     {
-        $pagination = $this->paginate($request, $repository, 'admin_gererDiet_index', 10, 'name');
-
+        $pagination = $this->paginate(
+            request: $request,
+            repository: $repository,
+            property: ['id', 'name']
+        );
         return $this->render('/admin/gererDiet/index.html.twig', [
             ...$pagination
         ]);

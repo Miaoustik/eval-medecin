@@ -78,7 +78,16 @@ body {
 }
 
 .hover-white:hover {
-    color: white;
+
+}
+
+.hoverPrimary:hover {
+    background-color: #DC9A7D;
+    color: white !important;
+}
+
+.mobile-hidden {
+    display: none;
 }
 
 

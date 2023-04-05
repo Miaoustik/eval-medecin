@@ -6,7 +6,7 @@
     {% include '_flashes.html.twig' %}
 
     {% include '/admin/_gererIndexBase.html.twig' with { 'items': items, 'property': 'name', 'pathController': 'gererAllergen', 'btnText': 'Créer une allergie' } %}
-    {% include '_pagination.html.twig' with {currentPage, pageNumber, paginationPath} %}
+    {% include '_pagination.html.twig' %}
 {% endblock %}
 
 {% block stylesheets %}

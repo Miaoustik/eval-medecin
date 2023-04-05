@@ -23,7 +23,11 @@ class GererAllergenController extends AbstractController
     #[Route(path: '/gerer-les-allergies', name: 'admin_gererAllergen_index')]
     public function index (AllergenRepository $repository, Request $request): Response
     {
-        $pagination = $this->paginate($request, $repository, 'admin_gererAllergen_index', 10, 'name');
+        $pagination = $this->paginate(
+            request: $request,
+            repository: $repository,
+            property: ['id', 'name']
+        );
 
         return $this->render('/admin/gererAllergen/index.html.twig', [
             ...$pagination
