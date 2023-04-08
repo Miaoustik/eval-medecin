@@ -1,6 +1,32 @@
 .searchBar::placeholder {
   color: #DC9A7D;
 }
+@media screen and (min-width: 960px) {
 
+  .desktopServices {
+    display: flex;
+    margin-top: 3rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, .25);
+    padding: 2rem;
+    background: linear-gradient(90deg, #DC9A7D 0%, #FFFFFF 86.65%);
+  }
+
+  .sectionMedecin {
+    display: flex;
+    margin-top: 3rem;
+    padding: 2rem;
+    justify-content: space-between;
+  }
+
+  .destopMedecin {
+    width: 75%;
+  }
+
+  .sandrine {
+    font-family: Reenie Beanie, sans-serif;
+    font-size: 1.6rem;
+  }
+}
 
 

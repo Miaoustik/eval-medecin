@@ -1,18 +1,3 @@
-@font-face{
-    font-family : 'Reenie Beanie';
-    src : url('../fonts/ReenieBeanie-Regular.ttf') format('truetype');
-}
-
-@font-face{
-    font-family : 'Noto Sans';
-    src : url('../fonts/NotoSans-Medium.ttf') format('truetype');
-}
-
-@font-face{
-    font-family : 'Baloo Bhaina';
-    src : url('../fonts/BalooBhaina-Regular.ttf') format('truetype');
-}
-
 * {
     box-sizing: border-box;
     margin: 0;
@@ -89,5 +74,59 @@ body {
 .mobile-hidden {
     display: none;
 }
+@media screen and (min-width: 720px) {
+    .offcanvas {
+        max-width: 70%;
+    }
+}
+hr {
+    display: none;
+}
+@media screen and (min-width: 960px) {
 
+    .container-md {
+        max-width: 70%;
+    }
+
+    .offcanvas {
+        max-width: 30%;
+    }
+
+    .mobile-hidden {
+        display: initial;
+    }
+
+    .mobile-show {
+        display: none;
+    }
+
+    .brand-title {
+        margin-left: 2em !important;
+        margin-right: 2em !important;
+    }
+
+    .searchNav {
+        flex: 1;
+    }
+
+    .containerNav {
+
+    }
+
+    .divNav {
+        margin-left: 1em;
+    }
+
+    .desktop-hidden {
+        display: none;
+    }
+
+    .connect {
+
+    }
+    hr {
+        display: block;
+    }
+
+}
 

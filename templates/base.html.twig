@@ -16,19 +16,28 @@
     </head>
     <body>
         <header class="sticky-top">
-            <nav class="shadowNav navbar navbar-expand-lg bg-light border border-2 p-0 border-primary">
-                <div class="container-fluid ">
+            <nav class="shadowNav navbar  bg-light border border-2 p-0 border-primary">
+                <div class="container-fluid containerNav">
                     <button class="navbar-toggler border-0 p-0 shadow-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon text-primary"></span>
                     </button>
                     <a class="navbar-brand text-secondary brand-title p-0 ms-auto me-auto" href="/">Sandrine Coupart</a>
-                    <div class="d-flex">
-                        <button class="btn my-1 py-0 btn-white border-0 text-primary  shadow-none hoverPrimary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSearch" aria-controls="offcanvasSearch" aria-expanded="false" aria-label="Toggle SearchBar">
+                    <form class="searchNav mobile-hidden" method="get" action="{{ path('recipes_index') }}" role="search">
+                        <div class="input-group">
+                            <input name="q" required placeholder="Rechercher une recette par nom : Soupe de tomate ..." id="searchHome" type="text" class="form-control shadow1" />
+                            <button class="shadow1 btn btn-primary text-white"><i class="bi bi-search"></i></button>
+                        </div>
+                    </form>
+                    <div class="d-flex divNav">
+                        <button class="btn my-1 py-0 btn-white border-0 text-primary mobile-show  shadow-none hoverPrimary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSearch" aria-controls="offcanvasSearch" aria-expanded="false" aria-label="Toggle SearchBar">
                             <i class="bi  bi-search"></i>
                             <span class="mobile-hidden" >Rechercher</span>
                         </button>
-
-                        <a class="btn py-0 my-1 btn-white  text-primary  shadow-none hoverPrimary" href="{{ path('app_login') }}"><i class="bi fs-3 bi-person-fill"><span class=" mobile-hidden ">Se connecter</span></i></a>
+                        {% if app.user %}
+                            <a class="btn connect py-1 my-1 btn-white fs-5 text-primary  shadow-none hoverPrimary" href="/logout"><i class="bi bi-person-fill desktop-hidden"></i><span class=" mobile-hidden textNoto fs-5 fst-normal" >Se déconnecter</span></a>
+                        {% else %}
+                            <a class="btn connect py-1 my-1 btn-white fs-5 text-primary  shadow-none hoverPrimary" href="{{ path('app_login') }}"><i class="bi bi-person-fill desktop-hidden"></i><span class=" mobile-hidden textNoto fs-5 fst-normal" >Se connecter</span></a>
+                        {% endif %}
                     </div>
 
                     <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasSearch" aria-labelledby="offcanvasSearchLabel">
@@ -37,7 +46,6 @@
                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                         </div>
                         <div class="offcanvas-body mt-5">
-
                             <form method="get" action="{{ path('recipes_index') }}" role="search">
                                 <label for="search" class="textNoto text-white mb-3">Rechercher une recette par nom :  </label>
                                 <input name="q" required placeholder="Soupe de tomate ..." id="search" type="text" class="form-control mt-3 shadow1" />
@@ -87,7 +95,7 @@
 
                                 {% else %}
                                     <li class="nav-item">
-                                        <a class="nav-link text-secondary" href="{{ path('recipes_index') }}">Recettes</a>
+                                        <a class="nav-link  text-white black-hover {% if app.request.get('_route') == 'recipes_index' %}canvasActive{% endif %} " href="{{ path('recipes_index') }}">Recettes</a>
                                     </li>
                                 {% endif %}
                             </ul>
@@ -96,7 +104,7 @@
                 </div>
             </nav>
         </header>
-        <div class="appContainer container-fluid px-4 pt-4">
+        <div class="appContainer container-md px-4 pt-4">
             {% block body %}
             {% endblock %}
         </div>

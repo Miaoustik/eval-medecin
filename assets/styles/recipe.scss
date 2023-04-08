@@ -38,3 +38,58 @@
 .avisInterresse {
   font-size: 1.22rem;
 }
+
+.star-widget input {
+  display: none;
+}
+.star-widget {
+  display: flex;
+  flex-direction: row-reverse;
+  font-size: 1.8rem;
+  justify-content: center;
+}
+.star-widget input:not(:checked) ~ label:hover,
+.star-widget input:not(:checked) ~ label:hover ~ label{
+  color:  #DC9A7D;
+}
+
+.star-widget input:checked ~ label {
+  color:  #DC9A7D;
+}
+
+
+.star-widget label {
+  color: #876C60;
+  padding: 0.1rem;
+  transition: all 0.2s ease;
+}
+
+.comment {
+  max-height: 0;
+  overflow: hidden;
+  max-width: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: max-height 2s ease-in;
+}
+
+.comment.show {
+  max-height: 30rem;
+}
+
+@media screen and (min-width: 960px) {
+  .mobile-infos {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .hr-vertical {
+    width: 1px;
+    height: 100px;
+    background-color: #DC9A7D50;
+    margin-top: auto;
+    margin-bottom: auto;
+    display: block;
+  }
+}

@@ -9,18 +9,43 @@
         </div>
 
     </form>
-    <section class="mb-5">
-        <h2 class="text-secondary secondTitle mt-5">Mes services</h2>
-        <p class="textNoto">
-            Vous proposer des recettes adaptées à votre régime ou allergies spéciéfiées lors de votre inscription.
-        </p>
+    <section class="mb-5 desktopServices ">
+        <svg class="me-4 mt-4 mobile-hidden" width="357" height="230" viewBox="0 0 357 230" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <path d="M351 188C304.5 249 101.557 225.5 45.4999 225.5C-10.557 225.5 -12.5 70 29.9999 17.0001C50.0189 -7.96479 235 -1.99996 287 17C364 58.5 361.5 150 351 188Z" fill="url(#pattern1)"/>
+            <defs>
+                <pattern id="pattern1" patternContentUnits="objectBoundingBox" width="1" height="1">
+                    <image width="640" height="427" xlink:href="{{ asset('images/salad-640.jpg') }}" transform="matrix(0.0015625 0 0 0.00242275 0 -0.0172565)"/>
+                </pattern>
+            </defs>
+        </svg>
+
+        <div>
+            <h2 class="text-secondary secondTitle mt-5">Mes services</h2>
+            <p class="textNoto">
+                Vous proposer des recettes adaptées à votre régime ou allergies spéciéfiées lors de votre inscription.
+            </p>
+        </div>
     </section>
-    <section>
-        <h2 class="text-secondary secondTitle">A propos</h2>
-        <p class="textNoto">
-            Je suis une diététicienne-nutritionniste dont le cabinet est situé à Caen. En tant que professionnelle de santé, je prends en charge des patients dans le cadre de consultations diététiques. J’anime également des ateliers de prévention et d’information sur la nutrition.
-        </p>
+    <hr class="text-secondary mb-4"/>
+    <section class="sectionMedecin">
+        <svg class="me-4 mobile-hidden" width="289" height="281" viewBox="0 0 289 281" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <path d="M289 136.447C289 216.281 224.305 281 144.5 281C64.6948 281 0 216.281 0 136.447C0 56.6128 109.976 0 189.781 0C269.586 0 289 56.6128 289 136.447Z" fill="url(#pattern0)"/>
+            <defs>
+                <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
+                    <image width="1280" height="853" xlink:href="{{ asset('images/woman-1280.jpg') }}" transform="matrix(0.00113988 0 0 0.00117233 -0.0150627 0)"/>
+                </pattern>
+            </defs>
+        </svg>
+
+        <div class="destopMedecin">
+            <h2 class="text-secondary secondTitle">A propos</h2>
+            <p class="textNoto">
+                Je suis une diététicienne-nutritionniste dont le cabinet est situé à Caen. En tant que professionnelle de santé, je prends en charge des patients dans le cadre de consultations diététiques. J’anime également des ateliers de prévention et d’information sur la nutrition.
+            </p>
+            <p class=" text-secondary sandrine ms-0 mobile-hidden ">Sandrine Coupart</p>
+        </div>
     </section>
+    <hr class="text-secondary mb-4"/>
 {% endblock %}
 
 {% block stylesheets %}

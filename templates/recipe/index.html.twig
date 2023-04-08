@@ -1,29 +1,40 @@
 {%  extends 'base.html.twig' %}
 
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('comments') }}
+{% endblock %}
+
 {% block body %}
-    <h1 class="secondTitle text-center mb-3"> {{ recipe.title }}</h1>
+    <h1 class="secondTitle text-center mt-3 mb-4"> {{ recipe.title }}</h1>
     <p class="textNoto textJustify">{{ recipe.description }}</p>
-
-    <h2 class="mt-5 text-decoration-underline secondTitle">Ingrédients :</h2>
-    <ul class="p-0 mt-3 list-unstyled">
-        {% for ingredientRecipe in recipe.ingredientRecipes %}
-            <li class="ps-4"><p class="roundedSquare pt-1 textNoto">{{ ingredientRecipe.ingredient.name }}</p></li>
-        {% endfor %}
-    </ul>
-
-    <h2 class="mt-5 text-decoration-underline secondTitle">Allergènes :</h2>
-    <ul class="p-0 mt-3 list-unstyled">
-        {% for allergen in recipe.allergens %}
-            <li class="ps-4"><p class="roundedSquare pt-1 textNoto">{{ allergen.name }}</p></li>
-        {% endfor %}
-    </ul>
-
-    <h2 class="mt-5 text-decoration-underline secondTitle">Régimes :</h2>
-    <ul class="p-0 mt-3 list-unstyled">
-        {% for diet in recipe.diets %}
-            <li class="ps-4"><p class="roundedSquare pt-1 textNoto">{{ diet.name }}</p></li>
-        {% endfor %}
-    </ul>
+    <div>
+        <h2 class="mt-5 text-decoration-underline secondTitle">Ingrédients :</h2>
+        <ul class="p-0 mt-3 list-unstyled">
+            {% for ingredientRecipe in recipe.ingredientRecipes %}
+                <li class="ps-4"><p class="roundedSquare pt-1 textNoto">{{ ingredientRecipe.quantity }} {{ ingredientRecipe.ingredient.name }}</p></li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="mobile-infos">
+        <div>
+            <h2 class="mt-5 text-decoration-underline secondTitle">Allergènes :</h2>
+            <ul class="p-0 mt-3 list-unstyled">
+                {% for allergen in recipe.allergens %}
+                    <li class="ps-4"><p class="roundedSquare pt-1 textNoto">{{ allergen.name }}</p></li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="hr-vertical"></div>
+        <div>
+            <h2 class="mt-5 text-decoration-underline secondTitle">Régimes :</h2>
+            <ul class="p-0 mt-3 list-unstyled">
+                {% for diet in recipe.diets %}
+                    <li class="ps-4"><p class="roundedSquare pt-1 textNoto">{{ diet.name }}</p></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 
     <h2 class="mt-5 mb-4 text-decoration-underline secondTitle">Temps de préparation :</h2>
     <div class="inputStyle rounded pt-2 shadow1">
@@ -50,27 +61,35 @@
     </ul>
 
     {% if not is_granted('ROLE_ADMIN') %}
-    <div class="inputStyle rounded shadow1">
+        <div id="comments"></div>
+    {#<div class="inputStyle rounded shadow1">
         <p class="text-center text-secondary mb-1 pt-2">La recette est terminée.</p>
         <p class="text-center textNoto avisInterresse mb-1">Votre avis m'intérresse</p>
-        <div class="d-flex justify-content-center pb-2">
-            <svg width="40" height="40" viewBox="0 0 100 100">
-                <polygon points="50,0 62,40 100,40 69,62 81,100 50,76.5 19,100 31,62 0,40 38,40" style="fill: #DC9A7D;stroke: #DC9A7D;stroke-width: 1px" />
-            </svg>
-            <svg width="40" height="40" viewBox="0 0 100 100">
-                <polygon points="50,0 62,40 100,40 69,62 81,100 50,76.5 19,100 31,62 0,40 38,40" style="fill: #DC9A7D;stroke: #DC9A7D;stroke-width: 1px" />
-            </svg>
-            <svg width="40" height="40" viewBox="0 0 100 100">
-                <polygon points="50,0 62,40 100,40 69,62 81,100 50,76.5 19,100 31,62 0,40 38,40" style="fill: #DC9A7D;stroke: #DC9A7D;stroke-width: 1px" />
-            </svg>
-            <svg width="40" height="40" viewBox="0 0 100 100">
-                <polygon points="50,0 62,40 100,40 69,62 81,100 50,76.5 19,100 31,62 0,40 38,40" style="fill: #DC9A7D;stroke: #DC9A7D;stroke-width: 1px" />
-            </svg>
-            <svg width="40" height="40" viewBox="0 0 100 100">
-                <polygon points="50,0 62,40 100,40 69,62 81,100 50,76.5 19,100 31,62 0,40 38,40" style="fill: #FFFFFF;stroke: #DC9A7D;stroke-width: 1px" />
-            </svg>
-        </div>
-    </div>
+        <form class=" pb-2">
+            <div class="star-widget mx-auto">
+
+                <input type="radio" name="rate" id="rate-5"/>
+                <label for="rate-5" class="bi bi-star-fill" ></label>
+
+                <input type="radio" name="rate" id="rate-4"/>
+                <label for="rate-4" class="bi bi-star-fill" ></label>
+
+                <input type="radio" name="rate" id="rate-3"/>
+                <label for="rate-3" class="bi bi-star-fill" ></label>
+
+                <input type="radio" name="rate" id="rate-2"/>
+                <label for="rate-2" class="bi bi-star-fill"></label>
+
+                <input type="radio" name="rate" id="rate-1"/>
+                <label for="rate-1" class="bi bi-star-fill" ></label>
+
+            </div>
+            <div class="comment mx-auto" >
+                <textarea class="form-control mt-2" rows="3" placeholder="Ecrivez votre avis..." ></textarea>
+                <button class="btn btn-primary text-white w-100 mt-2">Envoyer</button>
+            </div>
+        </form>
+    </div>#}
     {% endif %}
 {% endblock %}
 
