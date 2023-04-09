@@ -24,6 +24,7 @@
                     <a class="navbar-brand text-secondary brand-title p-0 ms-auto me-auto" href="/">Sandrine Coupart</a>
                     <form class="searchNav mobile-hidden" method="get" action="{{ path('recipes_index') }}" role="search">
                         <div class="input-group">
+                            <label for="searchHome" class="d-none">Rechercher une recette par nom.</label>
                             <input name="q" required placeholder="Rechercher une recette par nom : Soupe de tomate ..." id="searchHome" type="text" class="form-control shadow1" />
                             <button class="shadow1 btn btn-primary text-white"><i class="bi bi-search"></i></button>
                         </div>
@@ -34,7 +35,7 @@
                             <span class="mobile-hidden" >Rechercher</span>
                         </button>
                         {% if app.user %}
-                            <a class="btn connect py-1 my-1 btn-white fs-5 text-primary  shadow-none hoverPrimary" href="/logout"><i class="bi bi-person-fill desktop-hidden"></i><span class=" mobile-hidden textNoto fs-5 fst-normal" >Se déconnecter</span></a>
+                            <a class="btn connect py-1 my-1 btn-white fs-5 text-primary  shadow-none hoverPrimary" href="/logout"><i class="bi bi-person-fill-slash desktop-hidden"></i><span class=" mobile-hidden textNoto fs-5 fst-normal" >Se déconnecter</span></a>
                         {% else %}
                             <a class="btn connect py-1 my-1 btn-white fs-5 text-primary  shadow-none hoverPrimary" href="{{ path('app_login') }}"><i class="bi bi-person-fill desktop-hidden"></i><span class=" mobile-hidden textNoto fs-5 fst-normal" >Se connecter</span></a>
                         {% endif %}

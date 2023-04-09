@@ -61,35 +61,7 @@
     </ul>
 
     {% if not is_granted('ROLE_ADMIN') %}
-        <div id="comments"></div>
-    {#<div class="inputStyle rounded shadow1">
-        <p class="text-center text-secondary mb-1 pt-2">La recette est terminée.</p>
-        <p class="text-center textNoto avisInterresse mb-1">Votre avis m'intérresse</p>
-        <form class=" pb-2">
-            <div class="star-widget mx-auto">
-
-                <input type="radio" name="rate" id="rate-5"/>
-                <label for="rate-5" class="bi bi-star-fill" ></label>
-
-                <input type="radio" name="rate" id="rate-4"/>
-                <label for="rate-4" class="bi bi-star-fill" ></label>
-
-                <input type="radio" name="rate" id="rate-3"/>
-                <label for="rate-3" class="bi bi-star-fill" ></label>
-
-                <input type="radio" name="rate" id="rate-2"/>
-                <label for="rate-2" class="bi bi-star-fill"></label>
-
-                <input type="radio" name="rate" id="rate-1"/>
-                <label for="rate-1" class="bi bi-star-fill" ></label>
-
-            </div>
-            <div class="comment mx-auto" >
-                <textarea class="form-control mt-2" rows="3" placeholder="Ecrivez votre avis..." ></textarea>
-                <button class="btn btn-primary text-white w-100 mt-2">Envoyer</button>
-            </div>
-        </form>
-    </div>#}
+        <div id="comments" data-recipeid="{{ recipe.id }}" data-connected="{% if app.user %}1{% else %}0{% endif %}"></div>
     {% endif %}
 {% endblock %}
 

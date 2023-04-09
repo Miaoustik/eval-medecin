@@ -1,85 +1,124 @@
 import React, {useCallback, useEffect, useState} from "react";
+import useFetch from "../admin/CreateRecipeReact/Hooks/useFetch";
+import useStarWidget from "../admin/CreateRecipeReact/Hooks/useStarWidget";
+import StarWidget from "../admin/CreateRecipeReact/Components/StarWidget";
+import useSignalController from "../admin/CreateRecipeReact/Hooks/useSignalController";
 
-export default function () {
+export default function ({recipeid, connected}) {
 
-    const [checked, setChecked] = useState(false)
-    const [inputs, setInputs] = useState({
-        1: false,
-        2: false,
-        3: false,
-        4: false,
-        5: false,
-    })
+    const controllerRef = useSignalController()
 
-
-    const handleChange = useCallback((e) => {
-
-        setInputs(prevState => {
-            const newState = {...prevState}
-            const number = e.target.id.slice(-1)
-            Object.keys(newState).forEach(k => {
-                if (k == number) {
-                    newState[k] = e.target.checked
-                } else {
-                    newState[k] = false
-                }
-            })
+    const { data, loading, setRefresh } = useFetch('/api/recette/' + recipeid + '/avis', controllerRef)
+    const { inputs, checked, handleChange } = useStarWidget()
+    const [ area, setArea ] = useState('')
+    const [ noticed, setNoticed ] = useState(false)
 
 
-            return newState
-        })
 
+    const handleArea = useCallback((e) => {
+        setArea(e.target.value)
     }, [])
 
-    useEffect(() => {
-        let checked = false
-        Object.keys(inputs).forEach(e => {
-            if (inputs[e] === true) {
-                checked = true
-            }
-        })
-        setChecked(checked)
+    const handleSubmit = useCallback((e) => {
+        e.preventDefault()
+        const note = Object.entries(inputs).filter((e) => {
+            return e[1]
+        })[0][0]
+
+        const noticeObj = {
+            recipeid,
+            note,
+            content: area
+        }
+
+        const fetchOptions = {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            signal: controllerRef.current.signal,
+            body: JSON.stringify(noticeObj),
+            method: 'POST'
+        }
+
+        fetch('/api/avis/creer', fetchOptions)
+            .then(() => {
+                setRefresh(prevState => {
+                    return !prevState
+                })
+                setNoticed(true)
+            })
+            .catch(error =>  console.warn(error))
+
+
     }, [
-        inputs["1"],
-        inputs["2"],
-        inputs["3"],
-        inputs["4"],
-        inputs["5"],
+        inputs['1'],
+        inputs['2'],
+        inputs['3'],
+        inputs['4'],
+        inputs['5'],
+        area
     ])
+
+    useEffect(() => {
+        if (data) {
+            console.log(data[1], typeof data[1])
+        }
+    }, [data])
+
+
+    if (loading) {
+        return (
+            <div className="spinner-border" role="status">
+                <span className="visually-hidden">Loading...</span>
+            </div>
+        )
+    }
+
+
 
     return (
         <>
-            <div className="inputStyle rounded shadow1">
-                <p className="text-center text-secondary mb-1 pt-2">La recette est terminée.</p>
-                <p className="text-center textNoto avisInterresse mb-1">Votre avis m'intérresse</p>
-                <form className=" pb-2">
-                    <div className="star-widget mx-auto">
+            {(connected === '1' &&
+                (noticed || data[1]
+                    ? (
+                        <div className={'alert alert-success'}>
+                            Merci pour votre avis.
+                        </div>
+                        )
+                    : (
+                        <div className="inputStyle rounded shadow1">
+                            <p className="text-center text-secondary mb-1 pt-2">La recette est terminée.</p>
+                            {data[1]}
+                            <p className="text-center textNoto avisInterresse mb-1">Votre avis m'intérresse</p>
+                            <form className=" pb-2" onSubmit={handleSubmit}>
+                                <StarWidget inputs={inputs} handleChange={handleChange} />
+                                <div className={"comment mx-auto " + (checked ? ' show' : '')}>
+                                    <textarea value={area} onChange={handleArea} className="form-control mt-2" rows="3" placeholder="Ecrivez votre avis..."></textarea>
+                                    <button className="btn btn-primary text-white w-100 mt-2">Envoyer</button>
+                                </div>
+                            </form>
+                        </div>
+                    )
+                )
+            )}
 
-                        <input checked={inputs["5"]} onChange={handleChange} type="radio" name="rate" id="rate-5"/>
-                        <label htmlFor="rate-5" className="bi bi-star-fill"></label>
+            <h3 className={'mt-4 secondTitle'}>Commentaires</h3>
 
-                        <input checked={inputs["4"]} onChange={handleChange} type="radio" name="rate" id="rate-4"/>
-                        <label htmlFor="rate-4" className="bi bi-star-fill"></label>
-
-                        <input checked={inputs["3"]} onChange={handleChange} type="radio" name="rate" id="rate-3"/>
-                        <label htmlFor="rate-3" className="bi bi-star-fill"></label>
-
-                        <input checked={inputs["2"]} onChange={handleChange} type="radio" name="rate" id="rate-2"/>
-                        <label htmlFor="rate-2" className="bi bi-star-fill"></label>
-
-                        <input checked={inputs["1"]} onChange={handleChange} type="radio" name="rate" id="rate-1"/>
-                        <label htmlFor="rate-1" className="bi bi-star-fill"></label>
-
-                    </div>
-                    <div className={"comment mx-auto " + (checked ? ' show' : '')}>
-                        <textarea className="form-control mt-2" rows="3" placeholder="Ecrivez votre avis..."></textarea>
-                        <button className="btn btn-primary text-white w-100 mt-2">Envoyer</button>
-                    </div>
-                </form>
-            </div>
+            { data[0].map((notice, index) => {
+                    return (
+                        <div key={'notice' + index} className={'card px-4 py-3 mb-4 shadow1'}>
+                            <div className={'mb-2'}>
+                                <i className={(notice.note >= 1 ? 'starFill' : 'star') + ' bi bi-star-fill'}></i>
+                                <i className={(notice.note >= 2 ? 'starFill' : 'star') + ' bi bi-star-fill'}></i>
+                                <i className={(notice.note >= 3 ? 'starFill' : 'star') + ' bi bi-star-fill'}></i>
+                                <i className={(notice.note >= 4 ? 'starFill' : 'star') + ' bi bi-star-fill'}></i>
+                                <i className={(notice.note == 5 ? 'starFill' : 'star') + ' bi bi-star-fill'}></i>
+                            </div>
+                            <p>{notice.content}</p>
+                        </div>
+                    )
+                })
+            }
         </>
-
-
-
     )
 }

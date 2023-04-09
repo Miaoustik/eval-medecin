@@ -39,28 +39,13 @@ class NoticeRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Notice[] Returns an array of Notice objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('n')
-//            ->andWhere('n.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('n.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Notice
-//    {
-//        return $this->createQueryBuilder('n')
-//            ->andWhere('n.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findWithRecipeId($id)
+    {
+        return $this->createQueryBuilder('n')
+            ->where('n.recipe = :id')
+            ->setParameter('id', $id)
+            ->orderBy('n.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

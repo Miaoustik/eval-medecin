@@ -142,7 +142,7 @@ class GererPatientController extends AbstractController
         if ($request->getMethod() === 'POST') {
             $data = $request->request->all();
             $user = new User();
-            //dd($data);
+            $user->setRoles(['ROLE_USER']);
 
             if ($data['email'] !== '') {
                 $user->setEmail($data['email']);
@@ -152,7 +152,7 @@ class GererPatientController extends AbstractController
                 $user->setPassword($hasher->hashPassword($user, $data['password']));
             }
 
-            if (count($data['allergens']) > 0) {
+            if (isset($data['allergens']) && count($data['allergens']) > 0) {
                 $newAllergens = $allergenRepository->findByIds($data['allergens']);
 
                 foreach ($newAllergens as $newAllergen) {
@@ -161,7 +161,7 @@ class GererPatientController extends AbstractController
 
             }
 
-            if (count($data['diets']) > 0) {
+            if (isset($data['diets']) && count($data['diets']) > 0) {
                 $newDiets = $dietRepository->findByIds($data['diets']);
 
                 foreach ($newDiets as $newDiet) {

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Recipe;
+use App\Entity\User;
 use App\Repository\AllergenRepository;
 use App\Repository\DietRepository;
 use App\Repository\RecipeRepository;
@@ -24,7 +25,46 @@ class RecipeController extends AbstractController
     #[Route(path: '/{id}', name: 'recipe_index')]
     public function index(int $id, RecipeRepository $repository, DietRepository $dietRepository, AllergenRepository $allergenRepository): Response
     {
-        $recipe = $repository->findByIdRecipe($id);
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $recipe = $repository->findByIdRecipe($id, !$user);
+
+        if (!$recipe) {
+            return new Response(status: 404);
+        }
+
+        if ($recipe->isPatientOnly() === true && !$user) {
+            return new Response(status: 404);
+        }
+
+        if ($user) {
+            $recipeAllergens =  $recipe->getAllergens();
+            $recipeDiets = $recipe->getDiets();
+
+            foreach ($user->getAllergens() as $userAllergen) {
+                foreach($recipeAllergens as $recipeAllergen) {
+                    if ($recipeAllergen->getId() === $userAllergen->getId()) {
+                        return new Response(status: 404);
+                    }
+                }
+            }
+
+            $userDiets = $user->getDiets();
+            foreach( $userDiets as $userDiet) {
+                if (count($recipeDiets) === 0 && count($userDiets) > 0) {
+                    return new Response(status: 404);
+                }
+
+                foreach ($recipeDiets as $recipeDiet) {
+                    if ($recipeDiet->getId() !== $userDiet->getId()) {
+                        return new Response(status: 404);
+                    }
+                }
+            }
+        }
+
+
         $diets = $dietRepository->findAll();
         $allergens = $allergenRepository->findAll();
 

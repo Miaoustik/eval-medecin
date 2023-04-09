@@ -64,16 +64,23 @@ class RecipeRepository extends ServiceEntityRepository
      * @return Recipe|null
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findByIdRecipe(int $id): ?Recipe
+    public function findByIdRecipe(int $id, bool $patientOnly = false): ?Recipe
     {
-        return $this->createQueryBuilder('r')
+        $qb = $this->createQueryBuilder('r')
             ->select("r", 'ir', 'i', 'd')
             ->leftJoin('r.allergens', 'a')
             ->leftJoin('r.diets', 'd')
             ->leftJoin('r.ingredientRecipes', 'ir')
             ->leftJoin('ir.ingredient', 'i')
             ->andWhere("r.id = :id")
-            ->setParameter('id', $id)
+            ->setParameter('id', $id);
+
+        if ($patientOnly) {
+            $qb = $qb
+                ->andWhere("r.patientOnly = false");
+        }
+
+        return $qb
             ->getQuery()
             ->getOneOrNullResult();
     }

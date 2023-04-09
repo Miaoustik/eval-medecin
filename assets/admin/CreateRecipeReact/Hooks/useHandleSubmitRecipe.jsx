@@ -114,8 +114,7 @@ export default function (
                 signal: controllerRef.current.signal
             }
 
-            console.log(recipeObj)
-            const url = recipeid ? '/admin/modifier-recette/' + recipeid + '/modify' : '/admin/creer-recette/create'
+            const url = recipeid ? '/admin/api/modifier-recette/' + recipeid + '/modify' : '/admin/api/creer-recette/create'
 
             fetch(url, fetchOptions)
                 .then(response => response.json())

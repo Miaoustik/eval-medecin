@@ -53,7 +53,7 @@ class GererRecipeController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/modifier-recette/{id}/modify')]
+    #[Route(path: '/api/modifier-recette/{id}/modify', methods: ['POST'])]
     public function modifyApiPost (
         Request $request,
         AllergenRepository $allergenRepository,
@@ -76,7 +76,7 @@ class GererRecipeController extends AbstractController
         return new JsonResponse($recipe->getId());
     }
 
-    #[Route(path: '/modifier-recette/{id}/data')]
+    #[Route(path: '/api/modifier-recette/{id}/data', methods: ['GET'])]
     public function modifyApiGet(Recipe $recipe, DietRepository $dietRepository, AllergenRepository $allergenRepository): Response
     {
         $diets = $dietRepository->findAll();
@@ -97,7 +97,7 @@ class GererRecipeController extends AbstractController
         return $this->render('/admin/gererRecipe/create.html.twig');
     }
 
-    #[Route(path: '/creer-recette/data')]
+    #[Route(path: '/api/creer-recette/data', methods: ['GET'])]
     public function createApiGet (DietRepository $dietRepository, AllergenRepository $allergenRepository): Response
     {
         $diets = $dietRepository->findAll();
@@ -114,7 +114,7 @@ class GererRecipeController extends AbstractController
         ], json: true);
     }
 
-    #[Route(path: '/creer-recette/create')]
+    #[Route(path: '/api/creer-recette/create', methods: ['POST'])]
     public function createApiPost (
         Request $request,
         AllergenRepository $allergenRepository,

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Repository\RecipeRepository;
 use App\Traits\PaginateTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,13 +18,25 @@ class RecipesController extends AbstractController
     #[Route(path: '', name: 'recipes_index')]
     public function index (RecipeRepository $repository, Request $request): Response
     {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $criteria = [];
+
+        if (!$user) {
+            $criteria['patientOnly'] = false;
+        } else {
+            $criteria['collection'] = ['diets' => $user->getDiets()];
+            $criteria['collection']['allergens'] = $user->getAllergens();
+        }
 
         $paginationParams = $this->paginateWithSearch(
             request: $request,
             repository: $repository,
             searchBy: 'title',
             order: 'title',
-            property: ['title', 'id']
+            property: ['title', 'id'],
+            criteria: $criteria
         );
 
 

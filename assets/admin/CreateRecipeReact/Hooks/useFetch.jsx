@@ -1,6 +1,6 @@
 import {useEffect, useMemo, useState} from "react";
 
-export default function (url, controllerRef = null) {
+export default function (url, controllerRef) {
 
     const [data, setData] = useState(null)
     const [loading, setLoading] = useState(true)
@@ -11,17 +11,12 @@ export default function (url, controllerRef = null) {
 
         setLoading(true)
 
-        const controller = new AbortController()
-
-        if (controllerRef) {
-            controllerRef.current = controller
-        }
 
         const fetchOptions = {
             headers: {
                 Accept: 'application/json',
             },
-            signal: controller.signal
+            signal: controllerRef.current.signal
         }
 
 
@@ -35,11 +30,10 @@ export default function (url, controllerRef = null) {
                 setLoading(false)
             })
 
-        return () => {
-            controller.abort()
-        }
-
     }, [refresh])
+
+
+
 
     return useMemo(() => ({
         data,

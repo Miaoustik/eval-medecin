@@ -16,6 +16,7 @@ import InputList from "./Components/InputList";
 import useHandleSubmitRecipe from "./Hooks/useHandleSubmitRecipe";
 import useFetchRecipe from "./Hooks/useFetchRecipe";
 import useCheckboxPatientOnly from "./Hooks/useCheckboxPatientOnly";
+import useSignalController from "./Hooks/useSignalController";
 
 const ingredientsPlaceholder = [
     '5 gr',
@@ -24,7 +25,7 @@ const ingredientsPlaceholder = [
 
 export default function ({recipeid = null}) {
 
-    const controllerRef = useRef(null)
+    const controllerRef = useSignalController()
     const errorRef = useRef(0)
 
 
