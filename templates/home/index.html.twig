@@ -1,6 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+
+    {% include '_flashes.html.twig' %}
+
     <form method="get" action="{{ path('recipes_index') }}" role="search">
         <label for="searchHome" class="textNoto text-black mb-3">Rechercher une recette par nom :  </label>
         <div class="input-group">

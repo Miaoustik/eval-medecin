@@ -1,0 +1,13 @@
+{% extends './base.html.twig' %}
+
+{% block body %}
+    <h2 class="secondTitle">Message</h2>
+
+    <p class="textNoto">Email : {{ contact.email }}</p>
+    <p class="textNoto">Message : </p>
+    <p class="textNoto">{{ contact.message }}</p>
+    <form action="{{ path('admin_gererContact_delete', {'id': contact.id}) }}" method="post">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete') }}" />
+        <button class="btn btn-secondary text-white shadow1 w-100" type="submit">Supprimer</button>
+    </form>
+{% endblock %}

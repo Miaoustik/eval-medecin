@@ -176,8 +176,7 @@ class GererPatientController extends AbstractController
                 $this->addFlash('success', 'Le patient a bien été crée');
                 return $this->redirectToRoute('admin_gererPatient_index');
             } catch (\Exception $exception) {
-                $this->addFlash('error', '');
-                dd($exception);
+                $this->addFlash('error', "Il y a un problème avec la création de patient.");
             }
         }
         $diets = $dietRepository->findAll();

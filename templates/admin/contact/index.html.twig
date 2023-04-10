@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h2 class="secondTitle text-secondary mb-4">Gérer les messages.</h2>
+
+    {% include '_flashes.html.twig' %}
+
+    <ul class="p-0 list-unstyled mt-3">
+        {% for item in items %}
+            <li class="lastBorder border-top border-primary ps-1">
+                <div class="d-flex align-items-center">
+                    <a href="{{ path('admin_gererContact_show', {'id': item.id}) }}" class="roundedSquare hoverTextPrimary p-3 textNoto text-decoration-none text-black">
+                        {{ attribute( item, 'email') }}
+                    </a>
+                    <form class="ms-auto" action="{{ path('admin_gererContact_delete', {'id': item.id}) }}" method="post">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete') }}" />
+                        <button class="ms-2 btn btn-secondary text-white shadow1" type="submit" ><i class="bi bi-trash3-fill"></i></button>
+                    </form>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>    {% include '_pagination.html.twig' %}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('recipes') }}
+{% endblock %}

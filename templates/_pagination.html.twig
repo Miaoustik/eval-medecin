@@ -3,20 +3,30 @@
 
 {% set minPage = currentPage - maxPagination %}
 {% set maxPage = currentPage + maxPagination %}
-min = {{ minPage }}, max = {{ maxPage }}
+{% set offsetLeft = 0 %}
+{% set offsetRight = 0 %}
+
+{%  if minPage < 1  %}
+    {% set offsetRight = minPage * (-1) + 1 %}
+    {% set minPage = 1 %}
+{%  endif %}
+
+{%  if maxPage > pageNumber  %}
+    {% set offsetLeft = maxPage * 1 - pageNumber %}
+    {% set maxPage = pageNumber %}
+{%  endif %}
+{% if pageNumber > 1 %}
 <nav aria-label="Page navigation">
     <ul class=" mt-4 mb-2 pagination text-secondary justify-content-center">
-
-
-
-{%  for page in minPage..maxPage %}
-    {% if page == currentPage %}
-        <li class="page-item active"><a class="page-link" href="{{ path(paginationPath, {"page": page}) }}">{{ page }}</a></li>
-    {% else %}
-        <li class="page-item"><a class="page-link" href="{{ path(paginationPath, {"page": page}) }}">{{ page }}</a></li>
-    {% endif %}
-{% endfor %}
-
-
+    {%  for page in (minPage - offsetLeft)..(maxPage + offsetRight) %}
+        {% if page > 0 and page <= pageNumber %}
+            {% if page == currentPage %}
+                <li class="page-item active"><a class="page-link" href="{{ path(paginationPath, {"page": page}) }}">{{ page }}</a></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" href="{{ path(paginationPath, {"page": page}) }}">{{ page }}</a></li>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
     </ul>
 </nav>
+{% endif %}

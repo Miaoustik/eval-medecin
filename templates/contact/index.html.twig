@@ -2,15 +2,26 @@
 
 {% block body %}
     <h2 class="secondTitle mb-3">Me contacter</h2>
-    <p class="textNoto">Vous pouvez me contacter par message en spécifiant votre adresse mail.</p>
 
-    <form>
-        <label class="secondTitle" for="emailInput" >Email :</label>
-        <input class="mb-4 form-control shadow1 inputStyle" id="emailInput" type="email" placeholder="Votre addresse email ..."/>
+    {% include '_flashes.html.twig' %}
+
+
+    <p class="textNoto">Vous pouvez me contacter par message{% if not app.user %} en spécifiant votre adresse mail{% endif %}.</p>
+    <form method="post">
+
+        {# honeypot for bots #}
+        <input class="input" type="text" name="name" />
+
+        {%  if not app.user %}
+            <label class="secondTitle" for="emailInput" >Email :</label>
+            <input required name="email" class="mb-4 form-control shadow1 inputStyle" id="emailInput" type="email" placeholder="Votre addresse email ..."/>
+        {% endif %}
         <label class="secondTitle" for="emailInput " >Message :</label>
-        <textarea class="form-control shadow1 inputStyle" id="emailInput" type="email" rows="10" placeholder="Votre message ..."></textarea>
-        <button class="btn btn-primary text-white w-100 mt-4">Envoyer</button>
+        <textarea required name="message" class="form-control shadow1 inputStyle" id="emailInput"  rows="10" placeholder="Votre message ..."></textarea>
+        <input type="hidden" value="{{ csrf_token('contact') }}" name="_token">
+        <button class="btn btn-primary text-white w-100 mt-4 shadow1">Envoyer</button>
     </form>
+
 {% endblock %}
 
 {% block stylesheets %}

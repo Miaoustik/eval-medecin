@@ -41,7 +41,7 @@ class GererDietController extends AbstractController
             ]),
             'method' => 'POST',
             "label" => 'Nouveau nom du régime : ',
-            'btnTxt' => 'Créer',
+            'btnTxt' => 'Modifier',
             'data_class' => Diet::class,
         ]);
 

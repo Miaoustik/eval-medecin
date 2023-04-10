@@ -101,7 +101,7 @@ class GererIngredientController extends AbstractController
     {
 
         $form = $this->createForm(type: GererType::class, data: new Ingredient(), options: [
-            "label" => 'Nom de la nouvelle allergie',
+            "label" => "Nom du nouvel ingrédient : ",
             'btnTxt' => 'Créer',
             'method' => 'POST',
             'data_class' => Ingredient::class,
