@@ -54,7 +54,7 @@
     <ul class="list-unstyled mb-5">
         {% for key, stage in recipe.stages %}
             <li class="mt-5">
-                <p class="secondTitleSmall secondTitle">Etape {{ key }}</p>
+                <p class="secondTitleSmall secondTitle">Etape {{ key + 1 }}</p>
                 <p class="textNoto">{{ stage }}</p>
             </li>
         {% endfor %}
