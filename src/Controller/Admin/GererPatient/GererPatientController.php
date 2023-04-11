@@ -31,9 +31,19 @@ class GererPatientController extends AbstractController
         $pagination = $this->paginate(
             request: $request,
             repository: $repository,
-            property: ['id', 'email'],
-            criteria: ["roles" => 'ROLE_USER']
+            property: ['id', 'email', 'roles']
         );
+
+        //TODO GET USERS AND FILTER BY ROLE HERE
+
+        $pagination['items'] = array_filter( $pagination['items'], function ($element) {
+            if ($element['roles'][0] === 'ROLE_ADMIN') {
+                return false;
+            }
+            return true;
+        } );
+
+        //dd($itemsFilter);
 
         return $this->render('/admin/gererPatient/index.html.twig', [
             ...$pagination
@@ -42,7 +52,8 @@ class GererPatientController extends AbstractController
 
     #[Route(path: '/modifier-un-patient/{id}', name: 'admin_gererPatient_modify')]
     public function modify (
-        User $user,
+        $id,
+        UserRepository $userRepository,
         Request $request,
         EntityManagerInterface $manager,
         DietRepository $dietRepository,
@@ -50,6 +61,9 @@ class GererPatientController extends AbstractController
         UserPasswordHasherInterface $hasher
     ): Response
     {
+        /** @var User $user */
+        $user = $userRepository->findByIdEager($id);
+        //dd($user);
         if ($request->getMethod() === 'POST') {
             $data = $request->request->all();
             //dd($data);
@@ -74,6 +88,10 @@ class GererPatientController extends AbstractController
                     $user->addAllergen($newAllergen);
                 }
 
+            } else {
+                foreach ($user->getAllergens() as $allergen) {
+                    $user->removeAllergen($allergen);
+                }
             }
 
             if (isset($data['diets']) && count($data['diets']) > 0) {
@@ -88,8 +106,13 @@ class GererPatientController extends AbstractController
                     $user->addDiet($newDiet);
                 }
 
+            } else {
+                foreach ($user->getDiets() as $diet) {
+                    $user->removeDiet($diet);
+                }
             }
 
+            //dd($data, $user );
             try {
                 $manager->flush();
                 $this->addFlash('success', 'Le patient a bien été modifié');
@@ -101,6 +124,7 @@ class GererPatientController extends AbstractController
         $allergens = $allergenRepository->findAll();
         $diets = $dietRepository->findAll();
 
+        //dd($user);
 
         return $this->render('admin/gererPatient/modify.html.twig', [
             'user' => $user,

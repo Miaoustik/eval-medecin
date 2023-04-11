@@ -49,19 +49,19 @@ export default function (
             "repos": ""
         })
 
-        ingredientsProps.setState({
+        ingredientsProps.setState([{
             id: 1,
             quantity: '',
             name: '',
             error: ''
-        })
+        }])
 
-        stageProps.setState({
+        stageProps.setState([{
             id: 1,
             value: '',
             error: '',
             nameId: 'stage'
-        })
+        }])
     }, [])
 
 
@@ -115,7 +115,6 @@ export default function (
             }
 
             const url = recipeid ? '/admin/api/modifier-recette/' + recipeid + '/modify' : '/admin/api/creer-recette/create'
-
             fetch(url, fetchOptions)
                 .then(response => response.json())
                 .then(data => setRecipeId(data))

@@ -65,9 +65,11 @@
                                 <li class="nav-item">
                                     <a class="nav-link {% if app.request.get('_route') == 'home_index' %}canvasActive{% endif %} text-white black-hover" aria-current="page" href="/">Page d'acceuil</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link {% if app.request.get('_route') == 'contact_index' %}canvasActive{% endif %} text-white black-hover" href="{{ path('contact_index') }}">Contact</a>
-                                </li>
+                                {% if not is_granted('ROLE_ADMIN') %}
+                                    <li class="nav-item">
+                                        <a class="nav-link {% if app.request.get('_route') == 'contact_index' %}canvasActive{% endif %} text-white black-hover" href="{{ path('contact_index') }}">Contact</a>
+                                    </li>
+                                {% endif %}
                                 {% if is_granted('ROLE_ADMIN') %}
                                     <li class="nav-item dropdown">
 
@@ -113,7 +115,7 @@
         </div>
         <footer class="mt-5 py-2 bg-primary text-white d-flex justify-content-around">
             <a href="{{ path('mentions') }}" class="w-25 text-white text-decoration-none d-block">Mentions légales</a>
-            <span class="text-center w-25 d-block">Copyright</span>
+            <span class="text-center w-25 d-block">Copyright <span>&copy;</span> 2023</span>
             <a href="{{ path('mentions') }}" class="text-center w-25 d-block text-white text-decoration-none ">CGU</a>
         </footer>
     </body>

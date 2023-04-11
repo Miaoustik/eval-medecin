@@ -2,6 +2,8 @@
 
 namespace App\Traits;
 
+use function Doctrine\ORM\QueryBuilder;
+
 trait findAllPaginatedByTrait
 {
 
@@ -29,8 +31,8 @@ trait findAllPaginatedByTrait
             $params = [];
             foreach ($criteria as $key => $crit) {
                 if ($key === 'roles') {
-                    $queryBuilder = $queryBuilder->andWhere("r.roles LIKE :role");
-                    $params['role'] = "%" . $crit . "%";
+                    $queryBuilder = $queryBuilder->andWhere($queryBuilder->expr()->like("r.roles", ':role'));
+                    $params['role'] = $queryBuilder->expr()->literal("\'%" . $crit . "%\'");
                 } else if ($key === 'collection') {
                     foreach ($crit as $name => $values) {
                         $queryBuilder = $queryBuilder
@@ -68,13 +70,15 @@ trait findAllPaginatedByTrait
             $queryBuilder->setParameters($params);
         }
 
-        //dd($queryBuilder
-        //    ->getQuery()
-        //    ->getResult());
+
 
         if ($order) {
             $queryBuilder = $queryBuilder->orderBy("r.$order");
         }
+
+        //dd($queryBuilder
+        //    ->getQuery()
+        //    ->getResult());
 
         return $queryBuilder
             ->getQuery()

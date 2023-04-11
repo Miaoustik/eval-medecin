@@ -4,7 +4,7 @@ import useStarWidget from "../admin/CreateRecipeReact/Hooks/useStarWidget";
 import StarWidget from "../admin/CreateRecipeReact/Components/StarWidget";
 import useSignalController from "../admin/CreateRecipeReact/Hooks/useSignalController";
 
-export default function ({recipeid, connected}) {
+export default function ({recipeid, connected, a}) {
 
     const controllerRef = useSignalController()
 
@@ -59,12 +59,6 @@ export default function ({recipeid, connected}) {
         area
     ])
 
-    useEffect(() => {
-        if (data) {
-            console.log(data[1], typeof data[1])
-        }
-    }, [data])
-
 
     if (loading) {
         return (
@@ -78,7 +72,7 @@ export default function ({recipeid, connected}) {
 
     return (
         <>
-            {(connected === '1' &&
+            {(connected === '1' && a === '0' &&
                 (noticed || data[1]
                     ? (
                         <div className={'alert alert-success'}>
@@ -102,7 +96,7 @@ export default function ({recipeid, connected}) {
                 )
             )}
 
-            <h3 className={'mt-4 secondTitle'}>Commentaires</h3>
+            <h3 className={'mt-4 secondTitle'}>Commentaires : {data[0].length}</h3>
 
             { data[0].map((notice, index) => {
                     return (

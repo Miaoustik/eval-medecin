@@ -126,6 +126,8 @@ class GererRecipeController extends AbstractController
         $postRecipe = json_decode($request->getContent());
         $recipe = $this->setRecipe($postRecipe, $allergenRepository, $dietRepository, $ingredientRepository, new Recipe());
 
+        //dd($postRecipe, $recipe);
+
         $manager->persist($recipe);
 
         try {

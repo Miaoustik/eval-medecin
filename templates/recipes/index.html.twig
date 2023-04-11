@@ -2,11 +2,17 @@
 
 {% block body %}
     <h2 class="secondTitle text-secondary mb-4">Découvrez nos recettes</h2>
+    {% if items | length == 0 %}
+        <div class="alert alert-warning">
+            Aucune recette disponible.
+        </div>
+    {% else %}
     <ul class="p-0 list-unstyled">
     {% for recipe in items %}
         <li class="lastBorder border-top border-primary ps-1"><p class="roundedSquare pt-3"><a class="text-decoration-none textNoto text-black" href="{{ path('recipe_index', {id: recipe.id}) }}">{{ recipe.title }}</a></p></li>
     {% endfor %}
     </ul>
+    {% endif %}
 
     {% include '_pagination.html.twig' %}
 

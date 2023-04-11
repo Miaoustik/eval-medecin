@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20230410142256 extends AbstractMigration
+final class Version20230410164634 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -27,7 +27,7 @@ final class Version20230410142256 extends AbstractMigration
         $this->addSql('CREATE SEQUENCE ingredient_recipe_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE notice_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE recipe_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE user_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE "user_id_seq" INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE TABLE allergen (id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_25BF08CE5E237E06 ON allergen (name)');
         $this->addSql('CREATE TABLE contact (id INT NOT NULL, message TEXT NOT NULL, email VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
@@ -94,7 +94,7 @@ final class Version20230410142256 extends AbstractMigration
         $this->addSql('DROP SEQUENCE ingredient_recipe_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE notice_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE recipe_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE user_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE "user_id_seq" CASCADE');
         $this->addSql('ALTER TABLE ingredient_recipe DROP CONSTRAINT FK_36F27176933FE08C');
         $this->addSql('ALTER TABLE ingredient_recipe DROP CONSTRAINT FK_36F2717659D8A214');
         $this->addSql('ALTER TABLE notice DROP CONSTRAINT FK_480D45C259D8A214');

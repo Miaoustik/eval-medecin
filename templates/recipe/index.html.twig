@@ -60,9 +60,8 @@
         {% endfor %}
     </ul>
 
-    {% if not is_granted('ROLE_ADMIN') %}
-        <div id="comments" data-recipeid="{{ recipe.id }}" data-connected="{% if app.user %}1{% else %}0{% endif %}"></div>
-    {% endif %}
+    <div id="comments" data-recipeid="{{ recipe.id }}" data-a="{% if app.user and is_granted('ROLE_ADMIN') %}1{% else %}0{% endif %}" data-connected="{% if app.user %}1{% else %}0{% endif %}"></div>
+
 {% endblock %}
 
 {% block stylesheets %}

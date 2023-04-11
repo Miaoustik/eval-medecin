@@ -6,6 +6,10 @@ trait findByNamesTrait
 {
     public function findAllByNames(array $names)
     {
+        if (count($names) === 0) {
+            return [];
+        }
+
         $qb = $this->createQueryBuilder('r');
         $params = [];
         foreach ( $names as $k => $name) {

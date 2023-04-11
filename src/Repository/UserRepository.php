@@ -83,4 +83,16 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function findByIdEager(int $id): mixed
+    {
+        return $this->createQueryBuilder('r')
+            ->select('r', 'd', 'a')
+            ->leftJoin('r.diets', 'd')
+            ->leftJoin('r.allergens', 'a')
+            ->where('r.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+    }
 }
