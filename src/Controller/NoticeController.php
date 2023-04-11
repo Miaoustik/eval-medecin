@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Notice;
+use App\Entity\User;
 use App\Repository\NoticeRepository;
 use App\Repository\RecipeRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -11,14 +12,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class NoticeController extends AbstractController
 {
 
-    public function __construct(private readonly SerializerInterface $serializer, private readonly CsrfTokenManagerInterface $tokenManager)
+    public function __construct(private readonly SerializerInterface $serializer)
     {
     }
 
@@ -26,13 +26,15 @@ class NoticeController extends AbstractController
     public function getNotices ($id, NoticeRepository $repository): Response
     {
         $avis = $repository->findWithRecipeId($id);
+        /** @var User|null $user */
         $user = $this->getUser();
 
         $alreadyNoticed = false;
-
-        foreach ($avis as $avi) {
-            if ($avi->getUser()->getId() === $user->getId()) {
-                $alreadyNoticed = true;
+        if ($user) {
+            foreach ($avis as $avi) {
+                if ($avi->getUser()->getId() === $user->getId()) {
+                    $alreadyNoticed = true;
+                }
             }
         }
 
