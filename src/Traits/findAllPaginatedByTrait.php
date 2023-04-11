@@ -34,28 +34,26 @@ trait findAllPaginatedByTrait
                     $queryBuilder = $queryBuilder->andWhere($queryBuilder->expr()->like("r.roles", ':role'));
                     $params['role'] = $queryBuilder->expr()->literal("\'%" . $crit . "%\'");
                 } else if ($key === 'collection') {
-                    foreach ($crit as $name => $values) {
-                        $queryBuilder = $queryBuilder
-                            ->Join("r.$name", $name)
-                            ->addSelect("$name.name");
-                        if ($name === 'allergens') {
-                            foreach ($values as $index => $value) {
-                                $queryBuilder = $queryBuilder
-                                    ->andWhere(":$name" . "$index NOT MEMBER OF r.allergens" );
+                        foreach ($crit as $name => $values) {
+                            $queryBuilder = $queryBuilder
+                                ->Join("r.$name", $name)
+                                ->addSelect("$name.name");
+                            if ($name === 'allergens') {
+                                foreach ($values as $index => $value) {
+                                    $queryBuilder = $queryBuilder
+                                        ->andWhere(":$name" . "$index NOT MEMBER OF r.allergens" );
 
-                                $params[$name. $index] = $value;
-                            }
-                        } else {
-                            foreach ($values as $index => $value) {
-                                $queryBuilder = $queryBuilder
-                                    ->andWhere(":$name" . $index . " MEMBER OF r.diets" );
+                                    $params[$name. $index] = $value;
+                                }
+                            } else {
+                                foreach ($values as $index => $value) {
+                                    $queryBuilder = $queryBuilder
+                                        ->andWhere(":$name" . $index . " MEMBER OF r.diets" );
 
-                                $params[$name. $index] = $value;
+                                    $params[$name. $index] = $value;
+                                }
                             }
                         }
-
-
-                    }
 
                 } else if (gettype($crit) === 'string') {
                     $queryBuilder = $queryBuilder

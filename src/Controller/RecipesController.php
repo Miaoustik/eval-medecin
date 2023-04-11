@@ -26,8 +26,13 @@ class RecipesController extends AbstractController
         if (!$user) {
             $criteria['patientOnly'] = false;
         } else {
-            $criteria['collection'] = ['diets' => $user->getDiets()];
-            $criteria['collection']['allergens'] = $user->getAllergens();
+            if (count($user->getDiets()) > 0) {
+                $criteria['collection'] = ['diets' => $user->getDiets()];
+            }
+
+            if (count($user->getAllergens()) > 0) {
+                $criteria['collection']['allergens'] = $user->getAllergens();
+            }
         }
 
         $paginationParams = $this->paginateWithSearch(
