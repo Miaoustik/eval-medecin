@@ -32,7 +32,7 @@ class NoticeController extends AbstractController
         $alreadyNoticed = false;
         if ($user) {
             foreach ($avis as $avi) {
-                if ($avi->getUser()->getId() === $user->getId()) {
+                if ($avi->getUser() && $avi->getUser()->getId() === $user->getId()) {
                     $alreadyNoticed = true;
                 }
             }

@@ -48,4 +48,15 @@ class NoticeRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findWithUserId(int $id)
+    {
+        return $this->createQueryBuilder('r')
+            ->select('r', 'u')
+            ->join('r.user', 'u')
+            ->where('u.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult();
+    }
 }

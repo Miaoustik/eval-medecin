@@ -4,11 +4,13 @@ namespace App\Controller\Admin\GererPatient;
 
 use App\Controller\Admin\AbstractAdminController;
 use App\Entity\Diet;
+use App\Entity\Notice;
 use App\Entity\User;
 use App\Form\GererType;
 use App\Form\PatientType;
 use App\Repository\AllergenRepository;
 use App\Repository\DietRepository;
+use App\Repository\NoticeRepository;
 use App\Repository\UserRepository;
 use App\Traits\PaginateTrait;
 use Doctrine\ORM\EntityManagerInterface;
@@ -134,14 +136,18 @@ class GererPatientController extends AbstractController
     }
 
     #[Route(path: '/delete-user/{id}', name: 'admin_gererPatient_delete')]
-    public function delete (User $user, EntityManagerInterface $manager, Request $request): Response
+    public function delete (User $user, EntityManagerInterface $manager, Request $request, NoticeRepository $noticeRepository): Response
     {
         $token = $request->request->get('_token');
 
         if (!$this->isCsrfTokenValid('delete', $token)) {
             return new Response(status: 404);
         }
-
+        /** @var Notice[] $notices */
+        $notices = $noticeRepository->findWithUserId($user->getId());
+        foreach ($notices as $notice) {
+            $notice->setUser(null);
+        }
         try {
             $manager->remove($user);
             $manager->flush();
