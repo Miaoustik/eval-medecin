@@ -14,7 +14,7 @@ Adresse en ligne: https://sandrine-coupart-diet.herokuapp.com/
     -cloner le projet de github
     -créer un fichier .env et définir les variables APP_SECRET, APP_ENV,  DATABASE_URL, MESSENGER_TRANSPORT_DSN et CORS_ALLOW_ORIGIN.
     (CORS pour autoriser votre localhost : exemple '^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$')
-    (CORS_ALLOW_ORIGIN exemple : 'doctrine://default?auto_setup=0')
+    (MESSENGER_TRANSPORT_DSN exemple : 'doctrine://default?auto_setup=0')
     -se rendre à la racine du projet et faire un composer install et un npm install.
     -faire symfony console doctrine:database create si vous n'avez pas encore créer votre base de donnée.
     -faire un symfony console doctrine:migrations:migrate pour préparer votre base de données à recevoir les données.
