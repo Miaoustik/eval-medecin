@@ -36,10 +36,11 @@ symfony console doctrine:database:create
 ```bash
 symfony console doctrine:migrations:migrate
 ```
-- tester le serveur en faisant symfony serve
+- tester le serveur en faisant npm run dev-server et symfony serve
 
 ```bash
 symfony serve
+npm run dev-server
 ```
 
 ### Un admin peut être créé avec :
